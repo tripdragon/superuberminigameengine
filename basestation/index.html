@@ -6,7 +6,13 @@
     <!-- <script src="mission1.js" type="module" defer></script> -->
     <!-- 
     python3 -m http.server 8001 
+    You have to shift click reload at times
     -->
+    <!-- just cause the console nags error about not having one -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./favico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favico/favicon-16x16.png">
+    <!-- <link rel="manifest" href="/site.webmanifest"> -->
 
     <link rel="stylesheet" href="./launch.css">
 
@@ -52,39 +58,34 @@
         
     </script>
 
+
+    <script type="importmap">
+			{
+				"imports": {
+					"game": "./core/game.js"
+				}
+			}
+		</script>
+    
     <script type="module" type="text/javascript">
-      import {memory as _o} from './memory.js';
-      // APPPP = AppMain();
+      import {memory as _m} from './core/memory.js';
+      import {BaseStation} from './core/baseStation.js';
+      const _b = _m.baseStation = new BaseStation();
+      
+      import { NotPac } from  "./games/notPac.js";
+      
 
-                  // import { OnScreenLogger } from "./Plugins/OnScreenLogger.js";
-                
+                // import { OnScreenLogger } from "./Plugins/OnScreenLogger.js";                
                 // its in the other script tag
-                  // onConsole = new OnScreenLogger();
-                // window.onConsole;
+                // onConsole = new OnScreenLogger();
                 
       
-      import { disc as squaresATron_I } from  "./Discs/square_a_tron.js";
-      // import { disc as bocky } from  "./Discs/bocky.js";
-
-      // Should have some stupid function like insertDisc ...
-      // moving Game setup into its class
-      
-      _o.addGameToCatalog(bocky);
-      // _o.addGameToCatalog(squaresATron_I);
-
-      
-      
-      // just debugging doc demos
-      import { disc as griddemo } from  "./Demos/griddemo.js";
-      // import { disc as platformwalker } from  "./Demos/platform-walker.js";
-
-      _o.addGameToCatalog(panels);
-      // _o.addGameToCatalog(griddemo);
-
 
       // for now we need a starter empty game cause swaping discs 
       // via url is not fully clearing the starting game
-      _o.insertDisc(starter);
+      // _o.insertDisc(starter);
+      
+      _b.insertDisc(NotPac);
     
 
 

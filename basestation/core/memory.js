@@ -5,6 +5,6 @@
 // this is a topest level constant of memory typically called "app"
 
 
-export default const memory = {
-  
+export const memory = {
+    baseStation : null
 }
