@@ -70,7 +70,10 @@
     <script type="module" type="text/javascript">
       import {memory as _m} from './core/memory.js';
       import {BaseStation} from './core/baseStation.js';
-      const _b = _m.baseStation = new BaseStation();
+      
+      const _b = _m.baseStation = new BaseStation({
+        canvasId : "canvassss"
+      });
       
       import { NotPac } from  "./games/notPac.js";
       
@@ -85,7 +88,7 @@
       // via url is not fully clearing the starting game
       // _o.insertDisc(starter);
       
-      _b.insertDisc(NotPac);
+      _b.insertDisc({game:NotPac});
     
 
 
