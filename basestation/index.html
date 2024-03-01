@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>meep meep</title>
+    <!-- <script src="mission1.js" type="module" defer></script> -->
+    <!-- 
+    python3 -m http.server 8001 
+    -->
+
+    <link rel="stylesheet" href="./launch.css">
+
+    <!-- idea is to inject here and clear when switching games -->
+    <style id="gamestyles" media="screen">
+      .fish {
+        color: "pwgjpodg";
+      }
+    </style>
+    
+  </head>
+
+  <body>
+
+    
+    <canvas id="canvassss" width="400" height="400"></canvas>
+
+    <!-- 
+    <div id="controls222">
+      <button class="pause button">ℼ</button>
+      <button class="play button">☃</button>
+      <button class="step button">☂</button>
+    </div>
+     -->
+
+    <div id="gamespace"></div>
+    <div id="bodyInjectionPointMain">
+    </div>
+
+
+    <script type="text/javascript">
+        // var _o;
+        
+        // these are needed here for now cause the gl-matrix plugin is not import type module
+        // todo: swap out
+        // const { vec2, vec3, mat3, mat4 } = glMatrix;
+
+        // APPPP.model1 = {
+        //   pos.
+        // }
+        
+        // var onConsole;
+        
+    </script>
+
+    <script type="module" type="text/javascript">
+      import {memory as _o} from './memory.js';
+      // APPPP = AppMain();
+
+                  // import { OnScreenLogger } from "./Plugins/OnScreenLogger.js";
+                
+                // its in the other script tag
+                  // onConsole = new OnScreenLogger();
+                // window.onConsole;
+                
+      
+      import { disc as squaresATron_I } from  "./Discs/square_a_tron.js";
+      // import { disc as bocky } from  "./Discs/bocky.js";
+
+      // Should have some stupid function like insertDisc ...
+      // moving Game setup into its class
+      
+      _o.addGameToCatalog(bocky);
+      // _o.addGameToCatalog(squaresATron_I);
+
+      
+      
+      // just debugging doc demos
+      import { disc as griddemo } from  "./Demos/griddemo.js";
+      // import { disc as platformwalker } from  "./Demos/platform-walker.js";
+
+      _o.addGameToCatalog(panels);
+      // _o.addGameToCatalog(griddemo);
+
+
+      // for now we need a starter empty game cause swaping discs 
+      // via url is not fully clearing the starting game
+      _o.insertDisc(starter);
+    
+
+
+      
+    </script>
+  </body>
+</html>
