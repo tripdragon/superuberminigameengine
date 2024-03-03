@@ -62,7 +62,8 @@
     <script type="importmap">
 			{
 				"imports": {
-					"game": "./core/game.js"
+					"game": "./core/game.js",
+          "utilites/": "./utilites/"
 				}
 			}
 		</script>
@@ -70,6 +71,8 @@
     <script type="module" type="text/javascript">
       import {memory as _m} from './core/memory.js';
       import {BaseStation} from './core/baseStation.js';
+      
+      window._m = _m;
       
       const _b = _m.baseStation = new BaseStation({
         canvasId : "canvassss"
@@ -91,8 +94,6 @@
       _b.insertDisc({game:NotPac});
     
 
-
-      
     </script>
   </body>
 </html>

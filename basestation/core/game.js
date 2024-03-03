@@ -8,4 +8,5 @@ export class Game{
   start(){
     console.log(`${this.name} start!!`);
   }
+  update(){}
 }

@@ -1,13 +1,30 @@
 
 
+/*
+
+starts a main Loop
+a game will provide "stuff" for the main Loop
+A game will have its own Scene grapth maybe
+
+*/
+
+import {Clock} from "utilites/clock.js";
+import {loop as _loop} from "./loop.js";
+
 export class BaseStation{
   
   currentGame = null;
+  loopID = -1;
+  gameTime = 0;
+  time = null;
+  
+  // need enum
+  runtimeState = "play"; // play pause step?
   
   constructor({name="", canvasId=""}={}){
     this.name = name;
     if (canvasId !== "") this.canvas = document.getElementById(canvasId);
-    
+    this.bootUp_CM();
   }
   
 
@@ -33,5 +50,22 @@ export class BaseStation{
     
   }
   
+  bootUp_CM(){
+    this.time = new Clock();
+    this.startLoop();
+  }
+  
+  
+  loop = _loop;
+  loopID = 0;
+  stopLoop(){
+    cancelAnimationFrame(this.loopID);
+  }
+  startLoop(){
+    this.loop.call(this);
+  }
+  pause(){
+    this.runtimeState = "pause";
+  }
   
 }
