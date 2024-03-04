@@ -10,6 +10,12 @@ export const loop = function(){
   
   this.time.update();
   
-  console.log(this.time.now);
-
+  // console.log(this.time.now);
+  
+  if(this.currentGame){
+    this.currentGame.beforeDraw();
+    // this.currentGame.drawScene();
+    this.currentGame.drawFrame();
+  }
+  
 }
