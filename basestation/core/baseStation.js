@@ -11,6 +11,9 @@ A game will have its own Scene grapth maybe
 import {Clock} from "utilites/clock.js";
 import {loop as _loop} from "./loop.js";
 // import {programInfo} from "./programInfo.js";
+// import { World } from "primitives/World.js";
+
+import {Matrix4} from "modules/matrix4.js";
 
 export class BaseStation{
   
@@ -22,13 +25,24 @@ export class BaseStation{
   canvas = null;
   gl = null;
   
+  // these are here as a basic default shader to get stuff on screen, otherwise
+  // each object will have its own for custom shaders
+  // might toss this
+  // shaderProgram = null; // these are assigned from the loaded game
+  // programInfo = null; // these are assigned from the loaded game
+  
   // need enum
   runtimeState = "play"; // play pause step?
+
+  // figuring out where to put the projection Matrix and then
+  // in the model where to put its com[putation]
+  
+  projectionMatrix = null;
   
   constructor({name="", canvasId=""}={}){
     this.name = name; 
     if (canvasId !== "") this.canvas = document.getElementById(canvasId);
-    if(this.canvas) this.gl = this.canvas.getContext("webgl");
+    if(this.canvas) this.gl = this.canvas.getContext("webgl2");
     // Only continue if WebGL is available and working
     if (this.gl === null) {
       alert(
@@ -71,6 +85,17 @@ export class BaseStation{
   bootUp_CM(){
     this.time = new Clock();
     this.startLoop();
+
+    
+    this.projectionMatrix = new Matrix4();
+    const left = 0;
+    const right = this.gameWidth;
+    const bottom = this.gameHeight;
+    const top = 0;
+    const near = 400;
+    const far = -400;
+    this.projectionMatrix.makeOrthographic(left, right, bottom, top, near, far);
+    
   }
   
   
@@ -84,6 +109,19 @@ export class BaseStation{
   }
   pause(){
     this.runtimeState = "pause";
+  }
+  
+  
+  
+  // console.warn("this needs to be adjusted");
+  // see https://webglfundamentals.org/webgl/lessons/webgl-anti-patterns.html
+  // window.innerWidth
+  // window.innerHeight roughly...
+  get gameWidth(){
+    return this.gl.canvas.width;
+  }
+  get gameHeight(){
+    return this.gl.canvas.height;
   }
   
 }

@@ -5,7 +5,7 @@
 
 import {Pipeline} from "./pipeline.js";
 // import {programInfo} from "gl/programInfo.js";
-import {attachProgramInfo_CM} from "gl/programInfo.js";
+// import {attachProgramInfo_CM} from "gl/programInfo.js";
 
 // for sceneGrapth we dont assign it, cause we might live change it
 // dukno
@@ -16,17 +16,25 @@ export class ScreenSpace extends Pipeline{
   
   constructor({system,scene,gl}){
     super({system,scene,gl});
-    attachProgramInfo_CM({
-      system:this.system,
-      gl:this.gl,
-      screenMode:"2d"
-    });
+    
+    // console.log("attachProgramInfo_CM can be moved from here!!");
+    // attachProgramInfo_CM({
+    //   target:this.system,
+    //   gl:this.gl,
+    //   screenMode:"2d"
+    // });
   }
   drawFrame({sceneGrapth,camera}){
+    // debugger
+    
+    // This is a mess
     redraw({
       scene:this.scene,
       gl:this.gl,
-      programInfo:this.programInfo,
+      
+      // programInfo:this.programInfo,
+      // programInfo: this.system.programInfo,
+      // shaderProgram: this.system.shaderProgram,
       sceneGrapth:sceneGrapth,
       camera:camera
     });
@@ -37,7 +45,7 @@ export class ScreenSpace extends Pipeline{
 
 // export function drawSceneScreenspace({app,gl,programInfo}){
 // function redraw({app,gl,programInfo,sceneGrapth,camera}){
-function redraw({scene,gl,programInfo,sceneGrapth,camera}){
+function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
 
   // this needs to replace app for scene
   // const color = app.backgroundColor;
@@ -57,10 +65,11 @@ function redraw({scene,gl,programInfo,sceneGrapth,camera}){
   // Clear the canvas before we start drawing on it.
   // Tell WebGL how to convert from clip space to pixels
   
+  // debugger
   // FOR NOW, this is a simple camera for offset entire scene
-  // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   // gl.viewport(app.cameraDefault.x, app.cameraDefault.y, gl.canvas.width, gl.canvas.height);
-  gl.viewport(camera.x, camera.y, gl.canvas.width, gl.canvas.height);
+  // gl.viewport(camera.x, camera.y, gl.canvas.width, gl.canvas.height);
   
   
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -132,6 +141,10 @@ function redraw({scene,gl,programInfo,sceneGrapth,camera}){
       continue; // skip this render
     }
     ff.gl = gl;
+    // 
+    ff.position.x = Math.random()*100;
+    ff.position.y = Math.random()*100;
+    ff.position.z = Math.random()*100;
     
     // here we could interject dirty flags
     // so check things like .isSelectable = true
@@ -148,14 +161,21 @@ function redraw({scene,gl,programInfo,sceneGrapth,camera}){
     
     // console.log(this.shaderProgram);
     // gl.useProgram(this.programInfo.program);
+    // debugger
+    // gl.useProgram(this.shaderProgram);
+    // gl.useProgram(system.shaderProgram);
+    // gl.useProgram(shaderProgram);
     
-    gl.useProgram(this.shaderProgram);
+    // SUBJECTIVE of this not being on system, but lets roll on this app
+    gl.useProgram(ff.shaderProgram);
+    // programInfo
     
     // if(ff.name !== "world"){
     //   // debugger
     // }
     // new!
-    ff.refreshMatrixes();
+        ff.refreshMatrixes();
+        // ff.refreshMatrixessdkfndkfgdfg();
     
     // Update and play need to be merged
     
@@ -179,6 +199,8 @@ function redraw({scene,gl,programInfo,sceneGrapth,camera}){
     
     const vertexCount = ff.pointsCount;
     
+    // CHANGE these to draw_elements
+    
     // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays
     if(ff.subType === "wirefornow" || ff.renderType === "wires"){
       // boo no width option
@@ -189,6 +211,7 @@ function redraw({scene,gl,programInfo,sceneGrapth,camera}){
       gl.drawArrays(gl.LINE_LOOP, offset2, vertexCount);
     }
     else {
+      // console.log("¿¥¥∑");
       // gl.drawArrays(primitiveType, offset2, vertexCount);
       gl.drawArrays(gl.TRIANGLES, offset2, vertexCount);
     }

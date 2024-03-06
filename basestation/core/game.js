@@ -21,27 +21,31 @@ So Game hands System the pipeline and then updates as needed
 */
 
 import {Scene} from './scene.js';
+import {SceneGrapth} from './sceneGrapth.js';
 
 export class Game{
   pipelineType = null;
   pipeline = null;
   gl = null;
   scene = null;
-  programInfo = null;
+  // shaderProgram = null;
+  // programInfo = null;
+  sceneGrapth = null;
   constructor(props){
     // debugger
     const {
       name = "",
       system = null,
       gl = null,
-      programInfo = null
+      // programInfo = null
     } = props;
     this.name = name;
     this.system = system;
     this.gl = gl;
     // this.app = app;
-    this.programInfo = programInfo;
+    // this.programInfo = programInfo;
     this.scene = new Scene();
+    this.sceneGrapth = new SceneGrapth(this.system);
   }
   start({system}={}){
     if(system) this.system = system;
