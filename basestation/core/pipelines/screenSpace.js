@@ -142,9 +142,9 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
     }
     ff.gl = gl;
     // 
-    ff.position.x = Math.random()*100;
-    ff.position.y = Math.random()*100;
-    ff.position.z = Math.random()*100;
+    ff.position.x = Math.random()*200;
+    ff.position.y = Math.random()*200;
+    ff.position.z = Math.random()*200;
     
     // here we could interject dirty flags
     // so check things like .isSelectable = true

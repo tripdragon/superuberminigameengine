@@ -270,6 +270,7 @@ export class Plane extends Quark {
 
 
           // Compute the matrices
+          // fake camera for now
           this.matrixTemp.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400);
           // matrix = m4.translate(matrix, translation[0], translation[1], translation[2]);
           // matrix = m4.xRotate(matrix, rotation[0]);
@@ -281,7 +282,14 @@ export class Plane extends Quark {
           //   var matrixLocation = gl.getUniformLocation(program, "u_matrix");
           // Set the matrix.
           // gl.uniformMatrix4fv(matrixLocation, false, matrix);
-          gl.uniformMatrix4fv(this.programInfo.uniformLocations.modelMatrix, false, this.matrixTemp.elements);
+          
+          
+          // we dont have a proper camera yet
+          // gl.uniformMatrix4fv(this.programInfo.uniformLocations.modelMatrix, false, this.matrixTemp.elements);
+          
+          // this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.modelMatrix, false, this.workMatrix.multiplyMatrices( this.system.projectionMatrix, this.worldMatrix).elements);
+          this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.modelMatrix, false, this.workMatrix.multiplyMatrices( this.matrixTemp, this.worldMatrix).elements);
+                
 
           // Draw the geometry.
           // var primitiveType = gl.TRIANGLES;

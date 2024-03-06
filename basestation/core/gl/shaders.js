@@ -6,11 +6,11 @@
 
 // https://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
 
-const vShaderB = `
-attribute vec4 a_position;
-attribute vec4 a_color;
+const vShaderB = `#version 300 es
+in vec4 a_position;
+in vec4 a_color;
 
-attribute vec2 a_texCoord;
+in vec2 a_texCoord;
 
 // not yet
 precision mediump float;
@@ -24,8 +24,8 @@ uniform mat4 u_matrix;
 // not yet
 // uniform mat4 uProjectionMatrix;
 
-varying vec4 v_color;
-varying vec2 v_texCoord;
+out vec4 v_color;
+out vec2 v_texCoord;
 
 void main() {
   gl_Position = u_matrix * a_position;
@@ -33,16 +33,17 @@ void main() {
 }
 `;
 
-const fShaderB = `
+const fShaderB = `#version 300 es
 precision mediump float;
-varying vec4 v_color;
+in vec4 v_color;
 
 // // not yet
 // precision mediump float;
 // uniform vec4 u_color;
 
+out vec4 magicColor;
 void main() {
-   gl_FragColor = v_color;
+    magicColor = v_color;
 }
 `;
 

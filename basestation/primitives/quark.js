@@ -69,6 +69,7 @@ export class Quark {
         this.localMatrix.setTranslation(this.position.x,this.position.y,this.position.z);
         this.updateWorldMatrix();
         
+        // console.log(this.localMatrix.elements);
         
         // if(this.parent){
         //   this.worldMatrix.multiplyMatrices(this.parent.worldMatrix, this.localMatrix);
