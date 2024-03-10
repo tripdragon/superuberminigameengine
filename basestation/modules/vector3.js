@@ -1,4 +1,5 @@
 
+// most from threejs vector3
 
 export class Vector3{
   
@@ -123,6 +124,51 @@ export class Vector3{
 		this.x = v1.x + ( v2.x - v1.x ) * alpha;
 		this.y = v1.y + ( v2.y - v1.y ) * alpha;
 		this.z = v1.z + ( v2.z - v1.z ) * alpha;
+
+		return this;
+
+	}
+  
+  // https://discussions.unity.com/t/inverselerp-for-vector3/177038
+  // 
+  // const ab = {x:0,y:0,z:0};
+  // const av = {x:0,y:0,z:0};
+  // const rr = {x:0,y:0,z:0};
+  // inverseLerp(a, b, v)
+  // {
+  //     // Vector3 AB = b - a;
+  //     ab.x = b.x - a.x;
+  //     ab.y = b.y - a.y;
+  //     ab.z = b.z - a.z;
+  // 
+  // 
+  //     // Vector3 AV = value - a;
+  //     av.x = v.x - a.x;
+  //     av.y = v.y - a.y;
+  //     av.z = v.z - a.z;
+  // 
+  //     const d0 = this.dotVectors(av,ab);
+  //     const d1 = this.dotVectors(ab,av);
+  // 
+  //     return Vector3.Dot(AV, AB) / Vector3.Dot(AB, AB);
+  // }
+  
+  dot( v ) {
+
+		return this.x * v.x + this.y * v.y + this.z * v.z;
+
+	}
+  dotVectors( v0, v1 ) {
+
+		return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
+
+	}
+  
+  negate() {
+
+		this.x = - this.x;
+		this.y = - this.y;
+		this.z = - this.z;
 
 		return this;
 

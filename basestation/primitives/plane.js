@@ -9,6 +9,8 @@ import {Matrix4} from "modules/matrix4.js";
 import {buildProgramInfo} from "gl/programInfo.js";
 import {initShaderProgramFlatShader} from "gl/shaders.js";
 
+import {random3InRange, randomInRange, inverseLerp} from "modules/mathness.js";
+
 export class Plane extends Mesh {
     
     isPlane = true;
@@ -254,5 +256,49 @@ export class Plane extends Mesh {
         
         }
         */
+
+        yy = -1;
+        basePos = null;
+        p0 = new Vector3();
+        p1 = new Vector3();
+        workV = new Vector3();
+        startingAlpha = 0;
+        startingSpeedScalar = 0;
+        update(){
+          let yy = this.yy;
+          if(yy === -1){
+            yy = this.system.gameWidth/8;
+          }
+          
+          if(this.basePos === null){
+            this.basePos = new Vector3().copy(this.position);
+            const _s = 0.5;
+            this.p0.copy(this.basePos).multiplyScalar(1.1).negate();
+            this.p1.copy(this.basePos).multiplyScalar(1.1);
+            this.startingSpeedScalar = randomInRange(0,0.5);
+            // inverseLerp
+            
+          }
+          
+          // console.log("¿");
+          
+          // bb.scale.setScalar(randomInRange(0.05,0.1))
+          // bb.position.fromArray(random3InRange(-200,200));
+          // console.log(yy);
+          // this.position.x += randomInRange(-yy,yy)
+          // this.position.y = randomInRange(-yy,yy);
+          // this.position.z = randomInRange(-yy,yy);
+          
+          // this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.abs(Math.cos(this.position.x))).x;
+          let _s = this.startingSpeedScalar;
+          // this.position.copy( this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)) );
+          this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)).x;
+          this.position.y = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.002+_s)).y;
+          this.position.z = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.003+_s)).z;
+          // this.position.y = randomInRange(-yy,yy);
+          // this.position.z = randomInRange(-yy,yy);
+          
+        }
+
 
 }

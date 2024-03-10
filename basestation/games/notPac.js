@@ -37,7 +37,7 @@ export class NotPac extends Game{
     bb.rotation.y = -0.2;
     // this.sceneGrapth.add(bb);
     
-    for (var i = 0; i < 22; i++) {
+    for (var i = 0; i < 122; i++) {
       
       const bb = new Plane({system:this.system, gl:this.gl, width:100,height:100, colorHex:0xffffff*Math.random()});
       // bb.rotation.y = -0.2;
