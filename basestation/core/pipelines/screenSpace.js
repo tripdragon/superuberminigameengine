@@ -4,12 +4,18 @@
 //drawSceneScreenspace
 
 import {Pipeline} from "./pipeline.js";
+import {Matrix4} from "modules/matrix4.js";
+import {degreeToRad} from "modules/mathness.js";
 // import {programInfo} from "gl/programInfo.js";
 // import {attachProgramInfo_CM} from "gl/programInfo.js";
 
 // for sceneGrapth we dont assign it, cause we might live change it
 // dukno
 // same for camera
+
+const cameraMatrix = new Matrix4();
+const rotationWorkMatrix = new Matrix4();
+
 export class ScreenSpace extends Pipeline{
   
   isScreenSpace = true;
@@ -47,12 +53,11 @@ export class ScreenSpace extends Pipeline{
 // function redraw({app,gl,programInfo,sceneGrapth,camera}){
 function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
 
-  // this needs to replace app for scene
+  
   // const color = app.backgroundColor;
   const color = scene.backgroundColor;
   
   // var color = {r:0.0, g:0.0, b:0.7, a:1};
-  // console.log("color",color);
   
   gl.clearColor(color.r, color.g, color.b, color.a); // Clear to black, fully opaque
   // gl.clearColor(0, 0, 1, 1); // Clear to black, fully opaque
@@ -64,66 +69,31 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
 
   // Clear the canvas before we start drawing on it.
   // Tell WebGL how to convert from clip space to pixels
-  
-  // debugger
-  // FOR NOW, this is a simple camera for offset entire scene
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  // gl.viewport(app.cameraDefault.x, app.cameraDefault.y, gl.canvas.width, gl.canvas.height);
-  // gl.viewport(camera.x, camera.y, gl.canvas.width, gl.canvas.height);
   
   
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 
 
-  //  save for later using a camera
-        
-        // Create a perspective matrix, a special matrix that is
-        // used to simulate the distortion of perspective in a camera.
-        // Our field of view is 45 degrees, with a width/height
-        // ratio that matches the display size of the canvas
-        // and we only want to see objects between 0.1 units
-        // and 100 units away from the camera.
-
-        // const fieldOfView = (45 * Math.PI) / 180; // in radians
-        // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-        // const zNear = 0.1;
-        // const zFar = 400.0;
-        // const projectionMatrix = mat4.create();
-
-        // note: glmatrix.js always has the first argument
-        // as the destination to receive the result.
-        // mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-
-        // Set the drawing position to the "identity" point, which is
-        // the center of the scene.
-        // const modelViewMatrix = mat4.create();
-        // 
-        // // Now move the drawing position a bit to where we want to
-        // // start drawing the square.
-        // mat4.translate(
-        //   modelViewMatrix, // destination matrix
-        //   modelViewMatrix, // matrix to translate
-        //   //[-20.0, 20.0, -76.0]
-        //   // [positionCheap.x, positionCheap.y, positionCheap.z]
-        //   [0,0,positionCheap.z]
-        //   // [0,0,0]
-        // ); // amount to translate
-        // 
-        // 
-        // // Set the shader uniforms
-        // gl.uniformMatrix4fv(
-        //   programInfo.uniformLocations.projectionMatrix,
-        //   false,
-        //   projectionMatrix
-        // );
-        // gl.uniformMatrix4fv(
-        //   programInfo.uniformLocations.modelViewMatrix,
-        //   false,
-        //   modelViewMatrix
-        // );
-        
-
+  // working out camera
+  {
+    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    cameraMatrix.perspectiveWebTut( degreeToRad(__dats.fov), aspect, __dats.near, __dats.far );
+    // cameraMatrix.perspectiveWebTut(__dats.fov, aspect, __dats.near, __dats.far );
+    cameraMatrix.translate(__dats.x,__dats.y,__dats.z);
+    rotationWorkMatrix.setRotationY( __dats.ry );
+    // rotationWorkMatrix.setRotationY( degreeToRad( __dats.ry ) );
+    cameraMatrix.multiply(rotationWorkMatrix);
+    
+    // ortho, seems offset though
+    // cameraMatrix.makeOrthographic(0,gl.canvas.clientWidth, 0, gl.canvas.clientHeight,400,-400);
+    // cameraMatrix.translate(__dats.x,__dats.y,__dats.z);
+    // rotationWorkMatrix.setRotationY(__dats.ry);
+    // cameraMatrix.multiply(rotationWorkMatrix);
+    
+  }
+  
 
   // NOW the objects are from the scene grapth!!!
   // tyme for plus button!!!
@@ -133,8 +103,6 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
   const primitiveType = gl.TRIANGLES;
   // var primitiveType = gl.LINES;
   
-  
-  
   for (var i = 0; i < sceneGrapth.objects.length; i++) {
     const ff = sceneGrapth.objects[i];
     if(ff.visible === false){
@@ -142,9 +110,20 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
     }
     ff.gl = gl;
     // 
-    ff.position.x = Math.random()*200;
-    ff.position.y = Math.random()*200;
-    ff.position.z = Math.random()*200;
+    // ff.position.x = Math.random()*200;
+    
+    // ff.position.x = __dats.x2;
+    // ff.scale.x = __dats.s2;
+    // ff.scale.y = __dats.s2;
+    // ff.scale.z = __dats.s2;
+    
+    // ff.rotation.x = __dats.r2x;
+    // ff.rotation.y = __dats.r2y;
+    // ff.rotation.z = __dats.r2z;
+    
+    // ff.position.y = __dats.y;
+    // ff.position.y = Math.random()*200;
+    // ff.position.z = Math.random()*200;
     
     // here we could interject dirty flags
     // so check things like .isSelectable = true
@@ -167,15 +146,11 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
     // gl.useProgram(shaderProgram);
     
     // SUBJECTIVE of this not being on system, but lets roll on this app
-    gl.useProgram(ff.shaderProgram);
+    if(ff.isMesh && ff.material?.shaderProgram){
+      // debugger
+      gl.useProgram(ff.material.shaderProgram);
+    }
     // programInfo
-    
-    // if(ff.name !== "world"){
-    //   // debugger
-    // }
-    // new!
-        ff.refreshMatrixes();
-        // ff.refreshMatrixessdkfndkfgdfg();
     
     // Update and play need to be merged
     
@@ -188,8 +163,18 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
     // Say in Quark.js or Polygon
     ff.play();
     
+    // if(ff.name !== "world"){
+    //   // debugger
+    // }
+    // new!
+        ff.refreshMatrixes();
+        // ff.refreshMatrixessdkfndkfgdfg();
     
-    ff.draw();
+    
+    
+    if (ff.isMesh) {
+      ff.draw({cameraMatrix:cameraMatrix});
+    }
     
     // ff.draw(this.programInfo.uniformLocations.colorUniformLocation, 
       // this.programInfo.uniformLocations.matrixUniformLocation, this.textureLocation);

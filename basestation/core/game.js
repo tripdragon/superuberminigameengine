@@ -28,6 +28,7 @@ export class Game{
   pipeline = null;
   gl = null;
   scene = null;
+  system;
   // shaderProgram = null;
   // programInfo = null;
   sceneGrapth = null;

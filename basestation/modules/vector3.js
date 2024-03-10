@@ -24,6 +24,10 @@ export class Vector3{
     this.x = x; this.y = y; this.z = z;
   }
   
+  setScalar(val){
+    this.x = this.y = this.z = val;
+  }
+  
   
   clear(){
     this.x = 0; this.y = 0; this.z = 0;

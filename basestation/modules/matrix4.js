@@ -17,6 +17,7 @@
 // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
 // import { Matrix4 } from "../Modules/GL-Matrix.js";
 
+
 export class Matrix4{
   
   
@@ -178,6 +179,15 @@ export class Matrix4{
 
 	}
   
+  setScale(sx, sy, sz) {
+    return this.set(
+      sx, 0,  0,  0,
+      0, sy,  0,  0,
+      0,  0, sz,  0,
+      0,  0,  0,  1,
+    );
+  }
+  
   // THIS one is not in threejs's
   // its brought over from a few others
   // goal is to multiply a translation in
@@ -219,7 +229,26 @@ export class Matrix4{
     return [this.elements[12], this.elements[13], this.elements[14], this.elements[15]];
   }
   
-  
+  // var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  // fieldOfViewInRadians 0 : 200
+  // near 0
+  // far 2000
+  perspectiveWebTut(fieldOfViewInRadians, aspect, near, far) {
+    var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
+    var rangeInv = 1.0 / (near - far);
+
+    const te = this.elements;
+    te[0] = f / aspect; te[1] = 0; te[2] = 0; te[3] = 0;
+    te[4] = 0; te[5] = f; te[6] = 0; te[7] = 0;
+    te[8] = 0; te[9] = 0; te[10] = (near + far) * rangeInv; te[11] = -1;
+    te[12] = 0; te[13] = 0; te[14] = near * far * rangeInv * 2; te[15] = 0;
+    // return [
+    //   f / aspect, 0, 0, 0,
+    //   0, f, 0, 0,
+    //   0, 0, (near + far) * rangeInv, -1,
+    //   0, 0, near * far * rangeInv * 2, 0,
+    // ];
+  }
   
 	makePerspective( left, right, top, bottom, near, far ) {
 
@@ -252,25 +281,51 @@ export class Matrix4{
     var matrix = m4.orthographic(left, right, bottom, top, near, far);
   */
 	makeOrthographic( left, right, top, bottom, near, far ) {
-
+  
 		const te = this.elements;
 		const w = 1.0 / ( right - left );
 		const h = 1.0 / ( top - bottom );
 		const p = 1.0 / ( far - near );
-
+  
 		const x = ( right + left ) * w;
 		const y = ( top + bottom ) * h;
 		const z = ( far + near ) * p;
-
+  
 		te[ 0 ] = 2 * w;	te[ 4 ] = 0;	    te[ 8 ] = 0;	       te[ 12 ] = - x;
 		te[ 1 ] = 0;	    te[ 5 ] = 2 * h;	te[ 9 ] = 0;	       te[ 13 ] = - y;
 		te[ 2 ] = 0;	    te[ 6 ] = 0;	    te[ 10 ] = - 2 * p;	 te[ 14 ] = - z;
 		te[ 3 ] = 0;	    te[ 7 ] = 0;	    te[ 11 ] = 0;	       te[ 15 ] = 1;
-
-		return this;
-
-	}
   
+		return this;
+  
+	}
+  // same as above, just different maths
+	// makeOrthographic( left, right, top, bottom, near, far ) {
+  // 
+	// 	const te = this.elements;
+  //   te[0] = 2 / (right - left); te[1] = 0; te[2] = 0; te[3] = 0;
+  //   te[4] = 0; te[5] = 2 / (top - bottom); te[6] = 0; te[7] = 0;
+  //   te[8] = 0; te[9] = 0; te[10] =  2 / (near - far); te[11] = 0;
+  //   te[12] = (left + right) / (left - right); te[13] = (bottom + top) / (bottom - top); 
+  //   te[14] = (near + far) / (near - far);
+  //   te[15] = 1;
+  //   // return [
+  //   //   2 / (right - left), 0, 0, 0,
+  //   //   0, 2 / (top - bottom), 0, 0,
+  //   //   0, 0, 2 / (near - far), 0,
+  //   // 
+  //   //   (left + right) / (left - right),
+  //   //   (bottom + top) / (bottom - top),
+  //   //   (near + far) / (near - far),
+  //   //   1,
+  //   // ];
+  // 
+	// 	return this;
+  // 
+	// }
+  
+  // its in 3d
+  // clip space to pixel space
   projection(width, height, depth) {
     // Note: This matrix flips the Y axis so 0 is at the top.
     const te = this.elements;
@@ -333,6 +388,72 @@ export class Matrix4{
 
 	}
 
+  // yRotate(mm, angleInRadians) {
+  //   this.multiply(mm, this.yRotation(angleInRadians));
+  //   return this;
+  // }
+  // angle theta radians
+  
+  setRotationY(angle){
+  // yRotation(angleInRadians) {
+  
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    return this.fromArray(
+      [
+        c, 0, -s, 0,
+        0, 1, 0, 0,
+        s, 0, c, 0,
+        0, 0, 0, 1,
+      ]
+    );
+  }
+  
+
+
+  // taken from THREEjs in bits
+  // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
+  // since we dotn have a euler but xyz is just a vector order, we just take that as default
+	// makeRotationFromEuler( euler ) {
+	setRotationFromEuler( euler ) {
+
+		const te = this.elements;
+
+		const x = euler.x, y = euler.y, z = euler.z;
+		const a = Math.cos( x ), b = Math.sin( x );
+		const c = Math.cos( y ), d = Math.sin( y );
+		const e = Math.cos( z ), f = Math.sin( z );
+
+		const ae = a * e, af = a * f, be = b * e, bf = b * f;
+
+		te[ 0 ] = c * e;
+		te[ 4 ] = - c * f;
+		te[ 8 ] = d;
+
+		te[ 1 ] = af + be * d;
+		te[ 5 ] = ae - bf * d;
+		te[ 9 ] = - b * c;
+
+		te[ 2 ] = bf - ae * d;
+		te[ 6 ] = be + af * d;
+		te[ 10 ] = a * c;
+
+		// bottom row
+		te[ 3 ] = 0;
+		te[ 7 ] = 0;
+		te[ 11 ] = 0;
+
+		// last column
+		te[ 12 ] = 0;
+		te[ 13 ] = 0;
+		te[ 14 ] = 0;
+		te[ 15 ] = 1;
+
+		return this;
+
+	}
+  
+  
   
   // 2d maybe
   /*

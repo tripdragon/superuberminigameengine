@@ -8,13 +8,15 @@
 
 const vShaderB = `#version 300 es
 in vec4 a_position;
-in vec4 a_color;
+// in vec4 a_color;
+in vec3 a_color;
 
 in vec2 a_texCoord;
 
 // not yet
 precision mediump float;
 uniform vec4 u_color;
+// uniform vec3 u_color;
 
 uniform mat4 u_matrix;
 
@@ -29,13 +31,14 @@ out vec2 v_texCoord;
 
 void main() {
   gl_Position = u_matrix * a_position;
-  v_color = a_color;
+  v_color = vec4(a_color.r,a_color.g,a_color.b, 1);
 }
 `;
 
 const fShaderB = `#version 300 es
 precision mediump float;
 in vec4 v_color;
+// in vec3 v_color;
 
 // // not yet
 // precision mediump float;
@@ -44,6 +47,8 @@ in vec4 v_color;
 out vec4 magicColor;
 void main() {
     magicColor = v_color;
+    // magicColor = vec4(0,1,0,1);
+    // magicColor = vec4(v_color.r,v_color.g,v_color.g, 1);
 }
 `;
 

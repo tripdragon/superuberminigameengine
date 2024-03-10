@@ -3,6 +3,11 @@ import {Vector3} from "modules/vector3.js";
 import {Matrix4} from "modules/matrix4.js";
 import {CheapPool} from "utilites/cheapPool.js";
 
+
+// need to multiply spoed matrixes not localMatrix
+
+
+
 export class Quark {
   
   isQuark = true;
@@ -10,19 +15,37 @@ export class Quark {
   system = null;
   name = "";
   gl = null; // systems gl canvas element
-  shaderProgram = null;
-  programInfo = null;
+  // shaderProgram = null;
+  // programInfo = null;
   visible = true;
+  
+  needsUpdateMatrixLocal = false;
+  
+  up = new Vector3();
+  left = new Vector3();
+  forward = new Vector3();
+  
   
   position = new Vector3(0,0,0);
   mPosition = new Vector3(Infinity, Infinity, Infinity); // not sure of this yet
   
+  rotation = new Vector3(); // should be Euler() but we dont have that yet
+  mRotation = new Vector3();
+  
+  scale = new Vector3(1,1,1);
+  mScale = new Vector3(1,1,1);
+  
   localMatrix = new Matrix4();
   worldMatrix = new Matrix4();
+  
+  workRotationM = new Matrix4();
+  workPositionM = new Matrix4();
+  workScaleM = new Matrix4();
 
   // localMatrix_changed = false; // dirty flag ?
   worldMatrix_changed = false; // dirty flag ?
   workMatrix = new Matrix4();
+  rotationWorkMatrix = new Matrix4();
 
   constructor({name="",...props}={}){
     this.name = name;
@@ -31,6 +54,7 @@ export class Quark {
       gl = null
     } = props;
     this.system = system;
+    // debugger
     this.gl = gl;
   }
   
@@ -59,15 +83,35 @@ export class Quark {
   
   refreshMatrixes(){
     
-    // return;
+    
+    if(!this.mRotation.equals(this.rotation)){
+      this.mRotation.copy(this.rotation);
+      // this.workRotationM.setRotationFromEuler(0,0,0);
+      this.workRotationM.setRotationFromEuler(this.rotation);
+      this.needsUpdateMatrixLocal = true;
+    }
+    
+    if(!this.mScale.equals(this.scale)){
+      this.mScale.copy(this.scale);
+      this.workScaleM.setScale(this.scale.x,this.scale.y,this.scale.z);
+      this.needsUpdateMatrixLocal = true;
+    }
     
     if(!this.mPosition.equals(this.position)){
         this.mPosition.copy(this.position);
         // console.log("refreshMatrixes");
         
         // for later 		this.matrix.compose( this.position, this.quaternion, this.scale );
-        this.localMatrix.setTranslation(this.position.x,this.position.y,this.position.z);
-        this.updateWorldMatrix();
+        // this.localMatrix.setTranslation(this.position.x,this.position.y,this.position.z);
+        
+        // this.localMatrix.setTranslation(this.position.x,this.position.y,this.position.z);
+        this.workPositionM.setTranslation(this.position.x,this.position.y,this.position.z);
+        
+        // this.localMatrix.setRotation(this.rotation.x,this.rotation.y,this.rotation.z);
+        // this.localMatrix.setRotation(this.rotation.x,this.rotation.y,this.rotation.z);
+        // this.updateWorldMatrix();
+        
+        this.needsUpdateMatrixLocal = true;
         
         // console.log(this.localMatrix.elements);
         
@@ -77,6 +121,16 @@ export class Quark {
         // else {
         //   this.worldMatrix.copy(this.localMatrix);
         // }
+    }
+    
+    if(this.needsUpdateMatrixLocal){
+      this.localMatrix.identity()
+      .multiply(this.workPositionM)
+      .multiply(this.workRotationM)
+      .multiply(this.workScaleM);
+      
+      this.updateWorldMatrix();
+      this.needsUpdateMatrixLocal = false;
     }
     
     

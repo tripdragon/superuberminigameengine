@@ -23,6 +23,10 @@
       }
     </style>
     
+    <!-- TEMP TEMPY TEMP untill we have our own custom component again -->
+    <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.19"></script>
+
+    
   </head>
 
   <body>
@@ -97,6 +101,42 @@
       
       _b.insertDisc({game:NotPac});
     
+
+    </script>
+    
+    <script>
+    console.log("lil gui TEMP!!");
+    var GUI = lil.GUI;
+    const gui = new GUI();
+    const __dats = {
+      x : 0,
+      y : 0,
+      z : -200,
+      rz : 0,
+      ry : 0,
+      fov : 40,
+      near : 1,
+      far : 2000,
+      x2 : 1,
+      s2 : 1,
+      r2x : 0,
+      r2y : 0,
+      r2z : 0,
+    }
+    gui.add( __dats, 'x', -400, 400 );
+    gui.add( __dats, 'y', -400, 400 );
+    gui.add( __dats, 'z', -400, 400 );
+    gui.add( __dats, 'rz', 0, Math.PI*2 );
+    gui.add( __dats, 'ry', 0, Math.PI*2 );
+    // gui.add( __dats, 'fov', 0, Math.PI*2 );
+    gui.add( __dats, 'fov', 0, 360 );
+    gui.add( __dats, 'near', 0, 200 );
+    gui.add( __dats, 'far', 0, 2000 );
+    gui.add( __dats, 'x2', 0, 400 );
+    gui.add( __dats, 's2', 0.0001, 4 );
+    gui.add( __dats, 'r2x', 0, Math.PI*4 );
+    gui.add( __dats, 'r2y', 0, Math.PI*4 );
+    gui.add( __dats, 'r2z', 0, Math.PI*4 );
 
     </script>
   </body>
