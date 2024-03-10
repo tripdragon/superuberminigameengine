@@ -14,8 +14,8 @@ body{
   position: absolute;
   top:0;
   left: 0;
-  background-color: orange;
-  border: solid 2px green;
+  /* background-color: orange; */
+  /* border: solid 2px green; */
 }
 
 .button{

@@ -292,9 +292,9 @@ export class Plane extends Mesh {
           // this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.abs(Math.cos(this.position.x))).x;
           let _s = this.startingSpeedScalar;
           // this.position.copy( this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)) );
-          this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)).x;
-          this.position.y = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.002+_s)).y;
-          this.position.z = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.003+_s)).z;
+          this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)*__dats.speed ).x;
+          this.position.y = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.002+_s)*__dats.speed ).y;
+          this.position.z = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.003+_s)*__dats.speed ).z;
           // this.position.y = randomInRange(-yy,yy);
           // this.position.z = randomInRange(-yy,yy);
           

@@ -82,9 +82,14 @@
       
       window._m = _m;
       
+      const cc = document.getElementById("canvassss");
+      cc.width = window.innerWidth;
+      cc.height = window.innerHeight;
+      
       const _b = _m.baseStation = new BaseStation({
         canvasId : "canvassss"
       });
+      
       
       import { NotPac } from  "./games/notPac.js";
       
@@ -111,10 +116,10 @@
     const __dats = {
       x : 0,
       y : 0,
-      z : -200,
+      z : -148,
       rz : 0,
-      ry : 0,
-      fov : 40,
+      ry : 1.33831847042925,
+      fov : 129,
       near : 1,
       far : 2000,
       x2 : 1,
@@ -122,21 +127,23 @@
       r2x : 0,
       r2y : 0,
       r2z : 0,
+      speed : 1,
     }
     gui.add( __dats, 'x', -400, 400 );
     gui.add( __dats, 'y', -400, 400 );
     gui.add( __dats, 'z', -400, 400 );
-    gui.add( __dats, 'rz', 0, Math.PI*2 );
+    // gui.add( __dats, 'rz', 0, Math.PI*2 );
     gui.add( __dats, 'ry', 0, Math.PI*2 );
     // gui.add( __dats, 'fov', 0, Math.PI*2 );
     gui.add( __dats, 'fov', 0, 360 );
-    gui.add( __dats, 'near', 0, 200 );
-    gui.add( __dats, 'far', 0, 2000 );
-    gui.add( __dats, 'x2', 0, 400 );
-    gui.add( __dats, 's2', 0.0001, 4 );
-    gui.add( __dats, 'r2x', 0, Math.PI*4 );
-    gui.add( __dats, 'r2y', 0, Math.PI*4 );
-    gui.add( __dats, 'r2z', 0, Math.PI*4 );
+    gui.add( __dats, 'speed', 0, 4 );
+    // gui.add( __dats, 'near', 0, 200 );
+    // gui.add( __dats, 'far', 0, 2000 );
+    // gui.add( __dats, 'x2', 0, 400 );
+    // gui.add( __dats, 's2', 0.0001, 4 );
+    // gui.add( __dats, 'r2x', 0, Math.PI*4 );
+    // gui.add( __dats, 'r2y', 0, Math.PI*4 );
+    // gui.add( __dats, 'r2z', 0, Math.PI*4 );
 
     </script>
   </body>
