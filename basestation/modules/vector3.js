@@ -154,14 +154,27 @@ export class Vector3{
   // }
   
   dot( v ) {
-
 		return this.x * v.x + this.y * v.y + this.z * v.z;
-
 	}
+  
   dotVectors( v0, v1 ) {
-
 		return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z;
+	}
+  
+  subVectors( a, b ) {
+		this.x = a.x - b.x;
+		this.y = a.y - b.y;
+		this.z = a.z - b.z;
+		return this;
+	}
 
+  crossVectors( a, b ) {
+		const ax = a.x, ay = a.y, az = a.z;
+		const bx = b.x, by = b.y, bz = b.z;
+		this.x = ay * bz - az * by;
+		this.y = az * bx - ax * bz;
+		this.z = ax * by - ay * bx;
+		return this;
 	}
   
   negate() {

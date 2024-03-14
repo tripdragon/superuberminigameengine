@@ -10,10 +10,11 @@ A game will have its own Scene grapth maybe
 
 import {Clock} from "utilites/clock.js";
 import {loop as _loop} from "./loop.js";
+import {PerspectiveCamera,OrthographicCamera} from "primitives/camera.js";
 // import {programInfo} from "./programInfo.js";
 // import { World } from "primitives/World.js";
 
-import {Matrix4} from "modules/matrix4.js";
+// import {Matrix4} from "modules/matrix4.js";
 
 export class BaseStation{
   
@@ -24,6 +25,11 @@ export class BaseStation{
   
   canvas = null;
   gl = null;
+  
+  // placeholder cameras to just render stuff, otherwise change in per game file
+  currentCamera = null;
+  perspectiveCamera;
+  orthographicCamera = null;
   
   // these are here as a basic default shader to get stuff on screen, otherwise
   // each object will have its own for custom shaders
@@ -37,7 +43,7 @@ export class BaseStation{
   // figuring out where to put the projection Matrix and then
   // in the model where to put its com[putation]
   
-  projectionMatrix = null;
+  // projectionMatrix = null;
   
   constructor({name="", canvasId=""}={}){
     this.name = name; 
@@ -74,7 +80,7 @@ export class BaseStation{
     this.unloadDisc();
     
     // game here is the arguments game reference
-    this.currentGame = new game({system:this,gl:this.gl});
+    this.currentGame = new game({system:this, gl:this.gl});
     this.currentGame.start(this);
     
     // or change to a Set()
@@ -85,17 +91,25 @@ export class BaseStation{
   bootUp_CM(){
     this.time = new Clock();
     this.startLoop();
+    
+    this.perspectiveCamera = new PerspectiveCamera(35,this.gameWidth/this.gameHeight,0.01,1000);
+    this.orthographicCamera = new OrthographicCamera(0,this.gl.canvas.clientWidth, 0, this.gl.canvas.clientHeight,400,-400);
+    this.swapCamera('p');
 
-    
-    this.projectionMatrix = new Matrix4();
-    const left = 0;
-    const right = this.gameWidth;
-    const bottom = this.gameHeight;
-    const top = 0;
-    const near = 400;
-    const far = -400;
-    this.projectionMatrix.makeOrthographic(left, right, bottom, top, near, far);
-    
+  }
+  
+  // we do this so its simply this.system.camera.projectionMatrix
+  get camera(){
+    return this.currentCamera;
+  }
+  // o , p, ortho, perspective
+  swapCamera(type){
+    if (type === "p") {
+      this.currentCamera = this.perspectiveCamera;
+    }
+    else if(type === "o"){
+      this.currentCamera = this.orthographicCamera;
+    }
   }
   
   
@@ -118,10 +132,12 @@ export class BaseStation{
   // window.innerWidth
   // window.innerHeight roughly...
   get gameWidth(){
-    return this.gl.canvas.width;
+    // return this.gl.canvas.width;
+    return this.gl.canvas.clientWidth;
   }
   get gameHeight(){
-    return this.gl.canvas.height;
+    // return this.gl.canvas.height;
+    return this.gl.canvas.clientHeight;
   }
   
 }

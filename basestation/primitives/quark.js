@@ -21,9 +21,12 @@ export class Quark {
   
   needsUpdateMatrixLocal = false;
   
-  up = new Vector3();
-  left = new Vector3();
-  forward = new Vector3();
+  up = new Vector3(0,1,0);
+  down = new Vector3(0,-1,0);
+  left = new Vector3(-1,0,0);
+  right = new Vector3(1,0,0);
+  forward = new Vector3(0,1,0);
+  backwards = new Vector3(0,-1,0);
   
   
   position = new Vector3(0,0,0);

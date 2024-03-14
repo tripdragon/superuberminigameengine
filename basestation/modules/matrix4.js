@@ -17,6 +17,11 @@
 // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js
 // import { Matrix4 } from "../Modules/GL-Matrix.js";
 
+import {Vector3} from './vector3.js';
+
+const _x = new Vector3();
+const _y = new Vector3();
+const _z = new Vector3();
 
 export class Matrix4{
   
@@ -233,7 +238,8 @@ export class Matrix4{
   // fieldOfViewInRadians 0 : 200
   // near 0
   // far 2000
-  perspectiveWebTut(fieldOfViewInRadians, aspect, near, far) {
+  // perspectiveWebTut(fieldOfViewInRadians, aspect, near, far) {
+  perspective(fieldOfViewInRadians, aspect, near, far) {
     var f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
     var rangeInv = 1.0 / (near - far);
 
@@ -250,25 +256,25 @@ export class Matrix4{
     // ];
   }
   
-	makePerspective( left, right, top, bottom, near, far ) {
-
-		const te = this.elements;
-		const x = 2 * near / ( right - left );
-		const y = 2 * near / ( top - bottom );
-
-		const a = ( right + left ) / ( right - left );
-		const b = ( top + bottom ) / ( top - bottom );
-		const c = - ( far + near ) / ( far - near );
-		const d = - 2 * far * near / ( far - near );
-
-		te[ 0 ] = x;	te[ 4 ] = 0;	te[ 8 ] = a;	te[ 12 ] = 0;
-		te[ 1 ] = 0;	te[ 5 ] = y;	te[ 9 ] = b;	te[ 13 ] = 0;
-		te[ 2 ] = 0;	te[ 6 ] = 0;	te[ 10 ] = c;	te[ 14 ] = d;
-		te[ 3 ] = 0;	te[ 7 ] = 0;	te[ 11 ] = - 1;	te[ 15 ] = 0;
-
-		return this;
-
-	}
+	// makePerspective( left, right, top, bottom, near, far ) {
+  // 
+	// 	const te = this.elements;
+	// 	const x = 2 * near / ( right - left );
+	// 	const y = 2 * near / ( top - bottom );
+  // 
+	// 	const a = ( right + left ) / ( right - left );
+	// 	const b = ( top + bottom ) / ( top - bottom );
+	// 	const c = - ( far + near ) / ( far - near );
+	// 	const d = - 2 * far * near / ( far - near );
+  // 
+	// 	te[ 0 ] = x;	te[ 4 ] = 0;	te[ 8 ] = a;	te[ 12 ] = 0;
+	// 	te[ 1 ] = 0;	te[ 5 ] = y;	te[ 9 ] = b;	te[ 13 ] = 0;
+	// 	te[ 2 ] = 0;	te[ 6 ] = 0;	te[ 10 ] = c;	te[ 14 ] = d;
+	// 	te[ 3 ] = 0;	te[ 7 ] = 0;	te[ 11 ] = - 1;	te[ 15 ] = 0;
+  // 
+	// 	return this;
+  // 
+	// }
 
   /*
     // https://webglfundamentals.org/webgl/lessons/webgl-3d-orthographic.html
@@ -280,7 +286,7 @@ export class Matrix4{
     var far = -400;
     var matrix = m4.orthographic(left, right, bottom, top, near, far);
   */
-	makeOrthographic( left, right, top, bottom, near, far ) {
+	orthographic( left, right, top, bottom, near, far ) {
   
 		const te = this.elements;
 		const w = 1.0 / ( right - left );
@@ -344,7 +350,7 @@ export class Matrix4{
   
   // GEH
   invert() {
-
+    // https://github.com/mrdoob/three.js/blob/ef80ac74e6716a50104a57d8add6c8a950bff8d7/src/math/Matrix4.js#L491
 		// based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
 		const te = this.elements,
 
@@ -452,6 +458,58 @@ export class Matrix4{
 		return this;
 
 	}
+
+  // snipped from threejs
+  // this mutates the matrix array to produce a new rotation
+
+  // camera.position, object.position, (0,1,0)
+	lookAt( eye, target, up ) {
+
+		const te = this.elements;
+
+		_z.subVectors( eye, target );
+
+		if ( _z.lengthSq() === 0 ) {
+
+			// eye and target are in the same position
+
+			_z.z = 1;
+
+		}
+
+		_z.normalize();
+		_x.crossVectors( up, _z );
+
+		if ( _x.lengthSq() === 0 ) {
+
+			// up and z are parallel
+
+			if ( Math.abs( up.z ) === 1 ) {
+
+				_z.x += 0.0001;
+
+			} else {
+
+				_z.z += 0.0001;
+
+			}
+
+			_z.normalize();
+			_x.crossVectors( up, _z );
+
+		}
+
+		_x.normalize();
+		_y.crossVectors( _z, _x );
+
+		te[ 0 ] = _x.x; te[ 4 ] = _y.x; te[ 8 ] = _z.x;
+		te[ 1 ] = _x.y; te[ 5 ] = _y.y; te[ 9 ] = _z.y;
+		te[ 2 ] = _x.z; te[ 6 ] = _y.z; te[ 10 ] = _z.z;
+
+		return this;
+
+	}
+
   
   
   

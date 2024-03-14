@@ -9,7 +9,7 @@ import {random3InRange, randomInRange} from "modules/mathness.js";
 export class NotPac extends Game{
   
 
-  camera = {x:0,y:0,z:0}
+  // camera = {x:0,y:0,z:0}
   
   constructor(props){
     super({name:"Not Pac 444", ...props});
@@ -60,10 +60,10 @@ export class NotPac extends Game{
   beforeDraw(){
     mainGameUpdate();
   }
-  drawFrame(){
-    this.pipeline.drawFrame({sceneGrapth:this.sceneGrapth,camera:this.camera});
-    // console.log("222222™222");
-  }
+  // drawFrame(){
+  //   this.pipeline.drawFrame({sceneGrapth:this.sceneGrapth,camera:this.camera});
+  //   // console.log("222222™222");
+  // }
 }
 
 

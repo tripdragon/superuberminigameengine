@@ -67,7 +67,9 @@ export class Game{
   }
   
   // drawScene(){}
-  drawFrame(){}
+  drawFrame(){
+    this.pipeline.drawFrame({sceneGrapth:this.sceneGrapth,camera:this.system.camera});
+  }
   
 }
 

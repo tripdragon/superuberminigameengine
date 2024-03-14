@@ -52,7 +52,6 @@ export class ScreenSpace extends Pipeline{
 // export function drawSceneScreenspace({app,gl,programInfo}){
 // function redraw({app,gl,programInfo,sceneGrapth,camera}){
 function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
-
   
   // const color = app.backgroundColor;
   const color = scene.backgroundColor;
@@ -75,16 +74,16 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 
-
+  
   // working out camera
   {
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    cameraMatrix.perspectiveWebTut( degreeToRad(__dats.fov), aspect, __dats.near, __dats.far );
-    // cameraMatrix.perspectiveWebTut(__dats.fov, aspect, __dats.near, __dats.far );
-    cameraMatrix.translate(__dats.x,__dats.y,__dats.z);
-    rotationWorkMatrix.setRotationY( __dats.ry );
-    // rotationWorkMatrix.setRotationY( degreeToRad( __dats.ry ) );
-    cameraMatrix.multiply(rotationWorkMatrix);
+    // const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    // cameraMatrix.perspective( degreeToRad(__dats.fov), aspect, __dats.near, __dats.far );
+    //// cameraMatrix.perspective(__dats.fov, aspect, __dats.near, __dats.far );
+    // cameraMatrix.translate(__dats.x,__dats.y,__dats.z);
+    // rotationWorkMatrix.setRotationY( __dats.ry );
+    //// rotationWorkMatrix.setRotationY( degreeToRad( __dats.ry ) );
+    // cameraMatrix.multiply(rotationWorkMatrix);
     
     // ortho, seems offset though
     // cameraMatrix.makeOrthographic(0,gl.canvas.clientWidth, 0, gl.canvas.clientHeight,400,-400);
@@ -92,7 +91,25 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
     // rotationWorkMatrix.setRotationY(__dats.ry);
     // cameraMatrix.multiply(rotationWorkMatrix);
     
+    // camera.updateProjectionMatrix();
+    // cameraMatrix.copy(camera.projectionMatrix)
+    // camera.updateViewMatrix();
+    
+    
   }
+  camera.position.set( __dats.x, __dats.y, __dats.z);
+  camera.rotation.y = __dats.ry;
+  // camera.position.set( Math.cos(__dats.theta)*__dats.radius, __dats.y, Math.sin(__dats.theta)*__dats.radius);
+  
+  // this version does all the things for transform, but we need lookat() to make the
+  // camera rotate around the scene 
+  camera.useLootAt = true;
+  const viewProjectionMatrix = camera.getViewProjectionMatrix();
+  
+  // this version does not do camera transform, just renders
+  // camera.refreshMatrixes();
+  // camera.updateProjectionMatrix();
+  // const viewProjectionMatrix = camera.projectionMatrix;
   
 
   // NOW the objects are from the scene grapth!!!
@@ -173,7 +190,8 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
     
     
     if (ff.isMesh) {
-      ff.draw({cameraMatrix:cameraMatrix});
+      // ff.draw({cameraMatrix:cameraMatrix});
+      ff.draw({cameraMatrix:viewProjectionMatrix});
     }
     
     // ff.draw(this.programInfo.uniformLocations.colorUniformLocation, 
