@@ -35,12 +35,12 @@ export class NotPac extends Game{
     // https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event
     document.addEventListener("keydown", keys);
     // shoudl not have to give its system right here
-    const aa = new Plane({system:this.system, gl:this.gl, width:100,height:100, colorHex:0xe4ff5c});
-    aa.rotation.y = 0.2;
+    // const aa = new Plane({system:this.system, gl:this.gl, width:100,height:100, colorHex:0xe4ff5c});
+    // aa.rotation.y = 0.2;
     // this.sceneGrapth.add(aa);
     
-    const bb = new Plane({system:this.system, gl:this.gl, width:100,height:100, colorHex:0x0044a3});
-    bb.rotation.y = -0.2;
+    // const bb = new Plane({system:this.system, gl:this.gl, width:100,height:100, colorHex:0x0044a3});
+    // bb.rotation.y = -0.2;
     // this.sceneGrapth.add(bb);
     
     for (var i = 0; i < 122; i++) {
@@ -73,6 +73,8 @@ export class NotPac extends Game{
     }
     
   }
+  
+  
   unload(){
     document.removeEventListener("keydown", keys);
   }
@@ -182,15 +184,15 @@ export class NotPac extends Game{
     
   }
 
-  drawFrame(){
-    
-    // Can move this logic into each object as an ecs
-    
-    const wobjects = this.sceneGrapth.objects;
-    
-    super.drawFrame();
-    
-  }
+  // drawFrame(){
+  // 
+  //   // Can move this logic into each object as an ecs
+  // 
+  //   const wobjects = this.sceneGrapth.objects;
+  // 
+  //   super.drawFrame();
+  // 
+  // }
   
   
 }
