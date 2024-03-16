@@ -1,6 +1,15 @@
 
 // various, some from threejs MathUtils.js
 
+export function clamp(x,min,max){
+  return Math.min(Math.max(x,min),max);
+}
+
+export function clampZeroOne(x){
+  return Math.min(Math.max(x,0),1);
+}
+
+
 export function radToDegree(rad) { return rad * 180 / Math.PI };
 export function degreeToRad(angle) { return angle * Math.PI / 180 };
 

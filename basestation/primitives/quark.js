@@ -19,6 +19,8 @@ export class Quark {
   // programInfo = null;
   visible = true;
   
+  custom = {}
+  
   needsUpdateMatrixLocal = false;
   
   up = new Vector3(0,1,0);
@@ -50,6 +52,8 @@ export class Quark {
   workMatrix = new Matrix4();
   rotationWorkMatrix = new Matrix4();
 
+  boundingBox = null;
+
   constructor({name="",...props}={}){
     this.name = name;
     const {
@@ -79,7 +83,7 @@ export class Quark {
 
 
 
-
+  computeBoundingBox(){}
 
 
 

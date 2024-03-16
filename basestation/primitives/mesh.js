@@ -6,6 +6,7 @@ import {Material} from "gl/material.js";
 import {Vector3} from "modules/vector3.js";
 import {Matrix4} from "modules/matrix4.js";
 import {Color} from "modules/color.js";
+import {Box3} from "modules/box3.js";
 
 // import {buildProgramInfo} from "gl/programInfo.js";
 // import {initShaderProgramFlatShader} from "gl/shaders.js";
@@ -17,10 +18,14 @@ import {Color} from "modules/color.js";
 export class Mesh extends Quark{
   isMesh = true;
   
+  positions = new Float64Array(0); // plane resets this
+  // colors = new Float64Array(0)
+  
   // materials = new CheapPool();
   // material = new Material();
   material;
-  colorHex;
+  // colorHex;
+  colorGLNeedsUpdate = false;
   
   // programInfo = null;
   loadedTexture = false;
@@ -47,19 +52,30 @@ export class Mesh extends Quark{
     const {
       colorHex = 0xffffff
     } = props;
-    this.colorHex = colorHex;
+
+    this.material = new Material({gl:this.gl,color:colorHex});
   }
   
-  
-  
 
+  
+  computeBoundingBox() {
+    this.boundingBox = new Box3().setFromObject(this);
+    // this.boundingBox = bounding.getSize(new Vector3()).multiplyScalar(0.5);
+  }
+  
+  getVerticeFromBuffer(index,vec){
+    vec.set(this.positions[index],this.positions[index+1], this.positions[index+2]);
+  }
+  // getColorFromBuffer(index,col){
+  //   col.set(this.colorBuffer[index], this.colorBuffer[index+1], this.colorBuffer[index+2]);
+  // }
 
   // +++++++++++
   // GL copy over
   
   // 
   // 
-  // #drawing routines, should be moved into function
+  // #drawing routines
   // 
   // 
   // 
@@ -74,20 +90,6 @@ export class Mesh extends Quark{
     const gl = this.gl;
     
     this.matrixTemp = new Matrix4();
-    
-    // this.buildProgramInfo();
-    // attachProgramInfo_CM({
-    //   target:this,
-    //   gl:this.gl,
-    //   screenMode:"2d"
-    // });
-    // debugger
-    this.material = new Material({gl:gl,color:this.colorHex});
-    
-                      // this.shaderProgram = initShaderProgramFlatShader(gl);
-                      // if(this.shaderProgram){
-                      //   this.programInfo = buildProgramInfo({gl:gl,shaderProgram:this.shaderProgram,screenMode:"2d"});
-                      // }
     
     
     //
@@ -114,17 +116,6 @@ export class Mesh extends Quark{
       const stride = 0; // how many bytes to get from one set of values to the next
       // 0 = use type and numComponents above
       const offset = 0; // how many bytes inside the buffer to start from
-      // gl.vertexAttribPointer(
-      //   this.programInfo.attribLocations.vertex,
-      //   numComponents,
-      //   type,
-      //   normalize,
-      //   stride,
-      //   offset
-      // );
-      // // this brewaks if commented out
-      // gl.enableVertexAttribArray(this.programInfo.attribLocations.vertex);
-      // 
       
       gl.vertexAttribPointer(this.material.programInfo.attribLocations.vertex, numComponents, type, normalize, stride, offset);
 
@@ -147,32 +138,21 @@ export class Mesh extends Quark{
     //   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(new Array(len).fill(0.01)), gl.STATIC_DRAW);
     // }
     
-    { // temp color display
+    { // basic vertex coloring
       this.colorBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-      const cl = this.material.color;
-      // console.log(cl);
-      const cc = [];
-      // debugger
-      // const len = 3*2; // 3 points * t tris
-      const len = this.positions.length/3 * 3; // 3 points * t tris, derive tris count from positions length / 3
-      for (var i = 0; i < len; i++) {
-        cc[i*3] = cl.r;
-        cc[i*3+1] = cl.g;
-        cc[i*3+2] = cl.b;
-        // cc[i*3] = Math.random();
-        // cc[i*3+1] = Math.random();
-        // cc[i*3+2] = Math.random();
-      }
-      // step for each rgb [012,345,678...]
-      // for (var i = 0; i < 3*2; i++) {
-      //   console.log(i*3, i*3+1, i*3+2 );
-      // }
+      
+      // same count as positions
+      this.colors = new Float64Array(this.positions.length);
+      
+      this.assignColors(this.material.color);
+      this.colorGLNeedsUpdate = true;
+      
       // gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(cc), gl.STATIC_DRAW);
       // gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(cc), gl.STATIC_DRAW);
       // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(new Array(len).fill(0.01)), gl.STATIC_DRAW);
       // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(new Array(3*2*3).fill(Math.random())), gl.STATIC_DRAW);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cc), gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
       
     }
 
@@ -201,96 +181,86 @@ export class Mesh extends Quark{
 
   }
   
+  setColorHex(val){
+    this.material.color.setHex(val);
+    this.assignColors(this.material.color);
+    this.colorGLNeedsUpdate = true;
+  }
   
+  setColorRGB(cc){
+    this.material.color.copy(cc);
+    this.assignColors(this.material.color);
+    this.colorGLNeedsUpdate = true;
+  }
   
-      // 
-      // Draw
-      // 
-      // draw(color, matrixLocation, textureLocation){
-      // annoyannnsnhwyer63Once = false;
+  assignColors(color){
+    const size = 3; // count of vertices in a tri
+    // const len = this.positions.length/3 * 3; // 3 points * t tris, derive tris count from positions length / 3
+    // uhhh /3 * 3 just cross each out
+    const len = this.colors.length; // 3 points * t tris, derive tris count from positions length / 3
+    for (var i = 0; i < len; i++) {
+      this.colors[i*size] = color.r;
+      this.colors[i*size+1] = color.g;
+      this.colors[i*size+2] = color.b;
+      // cc[i*3] = Math.random();
+      // cc[i*3+1] = Math.random();
+      // cc[i*3+2] = Math.random();
+    }
+  }
+
+
+  // 
+  // Draw
+  // 
+  // draw(color, matrixLocation, textureLocation){
+  // annoyannnsnhwyer63Once = false;
+  
+  // temp working
+  draw({cameraMatrix}){
+    const gl = this.gl;
+    
+    // setup vertex pos
+    // this replaces the positions buffer stuff
+    gl.bindVertexArray(this.vao);
+    
+    
+    { // do the same for color when things work
       
-      // temp working
-      draw({cameraMatrix}){
-        const gl = this.gl;
-        // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      if ( this.colorGLNeedsUpdate ) {
+        this.colorGLNeedsUpdate = false;
         
-        //
-        // setup vertex pos
         // 
+        // this.setColorHex(0x000000)
         
-
-        // {
-        //   gl.enableVertexAttribArray(this.programInfo.attribLocations.vertex);
-        //   gl.bindBuffer(gl.ARRAY_BUFFER, this.positionsBuffer);
-        // 
-        //   const numComponents = 3;
-        //   const type = gl.FLOAT; // the data in the buffer is 32bit floats
-        //   const normalize = false;
-        //   const stride = 0;
-        //   const offset = 0;
-        // 
-        //   gl.vertexAttribPointer(
-        //     this.programInfo.attribLocations.vertex,
-        //     numComponents,
-        //     type,
-        //     normalize,
-        //     stride,
-        //     offset
-        //   );
-        // }
+        gl.enableVertexAttribArray(this.material.programInfo.attribLocations.color);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+        const numComponents = 3;
+        const type = gl.FLOAT; // the data in the buffer is 32bit floats
+        // const type = gl.UNSIGNED_BYTE;  // the data is 8bit unsigned values
+        // const normalize = true;
+        const normalize = false;
+        const stride = 0;
+        const offset = 0;
         
-        // this replaces the positions buffer stuff
-        gl.bindVertexArray(this.vao);
+        gl.vertexAttribPointer(
+          this.material.programInfo.attribLocations.color,
+          numComponents,
+          type,
+          normalize,
+          stride,
+          offset
+        );
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
         
-        // do the same for color when things work
-        
-        {
-          gl.enableVertexAttribArray(this.material.programInfo.attribLocations.color);
-          gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-          const numComponents = 3;
-          const type = gl.FLOAT; // the data in the buffer is 32bit floats
-          // const type = gl.UNSIGNED_BYTE;  // the data is 8bit unsigned values
-          // const normalize = true;
-          const normalize = false;
-          const stride = 0;
-          const offset = 0;
-          
-          gl.vertexAttribPointer(
-            this.material.programInfo.attribLocations.color,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset
-          );
-        }
-
-
-        // Set the matrix.
-        //   var matrixLocation = gl.getUniformLocation(program, "u_matrix");
-        // Set the matrix.
-        // gl.uniformMatrix4fv(matrixLocation, false, matrix);
-        
-        // this.matrixTemp.yRotate(this.workMatrix, __dats.ry);
-        // this.matrixTemp.setTranslation( this.position.x, this.position.y, this.position.z );
-        
-        // this.localMatrix.setRotationY(__dats.x2);
-
-  // debugger
-        this.gl.uniformMatrix4fv(this.material.programInfo.uniformLocations.modelMatrix, false, this.workMatrix.multiplyMatrices( cameraMatrix, this.worldMatrix).elements);
-              
-              // this.programInfo.uniformLocations.modelMatrix.yRotate(this.matrixTemp, __dats.ry);
-
-        // Draw the geometry.
-        // var primitiveType = gl.TRIANGLES;
-        // var offset = 0;
-        // var count = 16 * 6;
-        // gl.drawArrays(primitiveType, offset, count);
-        // 
-        // this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.modelMatrix, false, this.workMatrix.multiplyMatrices( this.system.projectionMatrix, this.worldMatrix).elements);
-
       }
       
+    }
+    
+    // computing matrix for drawing
+    this.gl.uniformMatrix4fv(this.material.programInfo.uniformLocations.modelMatrix, false, this.workMatrix.multiplyMatrices( cameraMatrix, this.worldMatrix).elements);
+
+  }
   
+
   
 }

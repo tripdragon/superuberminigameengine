@@ -170,25 +170,23 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
     // programInfo
     
     // Update and play need to be merged
-    
-    // does logic stuff, then draws
-    // Hrrrmmmmm, yes its needed
-    ff.update();
-    
-    // This too has logics for animations
-    // THIS for now is how its computing transforms
-    // Say in Quark.js or Polygon
-    ff.play();
-    
-    // if(ff.name !== "world"){
-    //   // debugger
-    // }
-    // new!
-        ff.refreshMatrixes();
-        // ff.refreshMatrixessdkfndkfgdfg();
-    
-    
-    
+    // these 3 can go into the Game callbacks instead          
+                  // does logic stuff, then draws
+                  // Hrrrmmmmm, yes its needed
+                  ff.update();
+                  
+                  // This too has logics for animations
+                  // THIS for now is how its computing transforms
+                  // Say in Quark.js or Polygon
+                  ff.play();
+                  
+                  // if(ff.name !== "world"){
+                  //   // debugger
+                  // }
+                  ff.refreshMatrixes();
+                  
+                  
+                  
     if (ff.isMesh) {
       // ff.draw({cameraMatrix:cameraMatrix});
       ff.draw({cameraMatrix:viewProjectionMatrix});

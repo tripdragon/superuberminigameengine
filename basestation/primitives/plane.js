@@ -16,7 +16,8 @@ export class Plane extends Mesh {
     isPlane = true;
     
     // buffer array
-    positions = new Float64Array(18); // 3*3*2 //positions = [];
+    // reset in constructor
+    // __ positions = new Float64Array(18); // 3*3*2 //positions = [];
     pointsCount = 6; // two tris
     
     // points
@@ -45,6 +46,8 @@ export class Plane extends Mesh {
         // color,
       } = props;
       
+      this.positions = new Float64Array(18); // 3*3*2 //positions = [];
+
       // this.recomputeSides();
       // plane has no origin persay
       // its geometry is offset to handle this by default
@@ -64,6 +67,10 @@ export class Plane extends Mesh {
       // this.position.z = 10
       // debugger
       this.glInit();
+      
+      // _m.baseStation.currentGame.sceneGrapth.objects[0].boundingBox2D
+      // in mesh, with boundingBox2D being on quark
+      this.computeBoundingBox();
       
     }
     
@@ -99,204 +106,8 @@ export class Plane extends Mesh {
     }
 
     
-        /*
-        ___draw(){
-          
-          if(this.hasGLInit === false){
-            // this.glInit();
-            
-            // if( !this.system.annoyannnsnhwyer63Once ){
-            //   this.system.annoyannnsnhwyer63Once = true;
-            //   console.warn("WE NEED TO FIGURE OUT WHY this is needed");
-            //   console.log("see #annnsnhwyer63");
-            //   console.log("to handle the square tool to work");
-            //   console.log("techaniicllcllcy this is quite expenssive to constatly run");
-            //   console.log("so we just need a width !+= mWidth etc");
-            // }
-          }
-          
-          
-          
-          //
-          // setup vertex pos
-          // 
-
-          {
-            this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertex);
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionsBuffer);
-            
-            
-            const numComponents = 3;
-            const type = this.gl.FLOAT; // the data in the buffer is 32bit floats
-            const normalize = false; // don't normalize
-            const stride = 0; // how many bytes to get from one set of values to the next
-            // 0 = use type and numComponents above
-            const offset = 0; // how many bytes inside the buffer to start from
-            // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionsBuffer);
-            
-            this.gl.vertexAttribPointer(
-              this.programInfo.attribLocations.vertex,
-              numComponents,
-              type,
-              normalize,
-              stride,
-              offset
-            );
-            
-            
-          }
-
-          
-          // Set the shader uniforms
-                // this.gl.uniform4f(this.programInfo.uniformLocations.color, this.color.r, this.color.g, this.color.b, 1);
-
-          this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.modelMatrix, false, this.workMatrix.multiplyMatrices( this.system.projectionMatrix, this.worldMatrix).elements);
-                
-          
-          this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionsBufferLocal);
-          
-          {
-            const numComponents = 3; // pull out 3 values per iteration for xyz
-            const type = this.gl.FLOAT; // the data in the buffer is 32bit floats
-            const normalize = false; // don't normalize
-            const stride = 0; // how many bytes to get from one set of values to the next
-            // 0 = use type and numComponents above
-            const offset = 0; // how many bytes inside the buffer to start from
-            this.gl.vertexAttribPointer(
-              this.programInfo.attribLocations.vertex,
-              numComponents,
-              type,
-              normalize,
-              stride,
-              offset
-            );
-            // this brewaks if commented out, now it seems to not
-            this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertex);
-          }
-
-          // this should only be applied once since its reading
-          // UNLESS you change the vertices
-          // the order is weird here for now
-          if(this.hasSetupdataBuffer === false){
-            this.hasSetupdataBuffer = true;
-          }
-          
-          // console.warn("WE NEED TO FIGURE OUT WHY this is needed");
-          // console.log("to handle the square tool to work");
-          // console.log("techaniicllcllcy this is quite expenssive to constatly run");
-          // console.log("so we just need a width !+= mWidth etc");
-          // #annnsnhwyer63
-          this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.positions), this.gl.STATIC_DRAW);
-          
-          
-                // if(this.shouldLoadImage === true && this.hasStartedLoadingImage === false){
-                //   console.log("hasStartedLoadingImage 2222");
-                //   this._loadImage(this.cachedImageURL);
-                // }
-          
-          
-          //
-          // set up texcoords
-          //
-          {
-            const num = 2; // every coordinate composed of 2 values
-            const type = this.gl.FLOAT; // the data in the buffer is 32-bit float
-            const normalize = false; // don't normalize
-            const stride = 0; // how many bytes to get from one set to the next
-            const offset = 0; // how many bytes inside the buffer to start from
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.textureCoordBuffer);
-            this.gl.vertexAttribPointer(
-              this.programInfo.attribLocations.textureCoord,
-              num,
-              type,
-              normalize,
-              stride,
-              offset
-            );
-            this.gl.enableVertexAttribArray(this.programInfo.attribLocations.textureCoord);
-          }
-          
-          
-          // sdkjnfgldfg
-          // this.gl.uniform4f(this.programInfo.uniformLocations.color, this.color.r, this.color.g, this.color.b, 1);
-          this.gl.uniform4f(this.programInfo.uniformLocations.color, 1, 1, 1, 1);
-          
-          // MAYBE handle the projection here
-          // its building but not moving
-          
-          this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.modelMatrix, false, this.workMatrix.multiplyMatrices( this.system.projectionMatrix, this.worldMatrix).elements);
-
-          
-          
-    
-
-          // Tell WebGL we want to affect texture unit 0
-          this.gl.activeTexture(this.gl.TEXTURE0);
         
-          // Bind the texture to texture unit 0
-          this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
-        
-          // Tell the shader we bound the texture to texture unit 0
-          this.gl.uniform1i(this.programInfo.uniformLocations.uTexture, 0);
-        
-
-          // this should only be applied once since its reading
-          // UNLESS you change the vertices
-          // the order is weird here for now
-          if(this.hasSetupdataBuffer === false){
-            this.hasSetupdataBuffer = true;
-            this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.positions), this.gl.STATIC_DRAW);
-          }
-            
-          
-          
-          // return
-          // a lot was snipped out, se original file project
-          
-        
-        }
-        */
-
-        yy = -1;
-        basePos = null;
-        p0 = new Vector3();
-        p1 = new Vector3();
-        workV = new Vector3();
-        startingAlpha = 0;
-        startingSpeedScalar = 0;
         update(){
-          let yy = this.yy;
-          if(yy === -1){
-            yy = this.system.gameWidth/8;
-          }
-          
-          if(this.basePos === null){
-            this.basePos = new Vector3().copy(this.position);
-            const _s = 0.5;
-            this.p0.copy(this.basePos).multiplyScalar(1.1).negate();
-            this.p1.copy(this.basePos).multiplyScalar(1.1);
-            this.startingSpeedScalar = randomInRange(0,0.5);
-            // inverseLerp
-            
-          }
-          
-          // console.log("¿");
-          
-          // bb.scale.setScalar(randomInRange(0.05,0.1))
-          // bb.position.fromArray(random3InRange(-200,200));
-          // console.log(yy);
-          // this.position.x += randomInRange(-yy,yy)
-          // this.position.y = randomInRange(-yy,yy);
-          // this.position.z = randomInRange(-yy,yy);
-          
-          // this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.abs(Math.cos(this.position.x))).x;
-          let _s = this.startingSpeedScalar;
-          // this.position.copy( this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)) );
-          this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)*__dats.speed ).x;
-          this.position.y = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.002+_s)*__dats.speed ).y;
-          this.position.z = this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.003+_s)*__dats.speed ).z;
-          // this.position.y = randomInRange(-yy,yy);
-          // this.position.z = randomInRange(-yy,yy);
           
         }
 

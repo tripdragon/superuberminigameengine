@@ -195,7 +195,7 @@ export class Vector3{
   }
   
   clone(){
-    return new Vector3().copy(this);
+    return new this.constructor().copy(this);
   }
   
   
@@ -247,6 +247,19 @@ export class Vector3{
 
 		return dx * dx + dy * dy + dz * dz;
 
+	}
+  
+  min( v ) {
+		this.x = Math.min( this.x, v.x );
+		this.y = Math.min( this.y, v.y );
+		return this;
+	}
+
+	max( v ) {
+		this.x = Math.max( this.x, v.x );
+		this.y = Math.max( this.y, v.y );
+		this.z = Math.max( this.z, v.z );
+		return this;
 	}
   
 }
