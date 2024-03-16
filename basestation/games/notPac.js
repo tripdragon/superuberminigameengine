@@ -88,6 +88,51 @@ export class NotPac extends Game{
     
     const wobjects = this.sceneGrapth.objects;
     
+    // first part moves the objects, this could go into an ecs thingy
+    // console.log("nn", this.system.time.now);
+    for (var i = 0; i < wobjects.length; i++) {
+      
+      let gg = wobjects[i];
+      
+      let yy = gg.custom.yy;
+      
+      if(yy === -1){
+        yy = this.system.gameWidth/8;
+      }
+      
+      if(gg.custom.basePos === null){
+        gg.custom.basePos = gg.position.clone();
+        let basePos = gg.custom.basePos;
+        const _s = 0.5;
+        gg.custom.p0.copy(basePos).multiplyScalar(1.1).negate();
+        gg.custom.p1.copy(basePos).multiplyScalar(1.1);
+        gg.custom.startingSpeedScalar = randomInRange(0,0.5);
+        // inverseLerp
+        
+      }
+      
+      // console.log("¿");
+      
+      // bb.scale.setScalar(randomInRange(0.05,0.1))
+      // bb.position.fromArray(random3InRange(-200,200));
+      // console.log(yy);
+      // this.position.x += randomInRange(-yy,yy)
+      // this.position.y = randomInRange(-yy,yy);
+      // this.position.z = randomInRange(-yy,yy);
+      
+      // this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.abs(Math.cos(this.position.x))).x;
+      let _s = gg.custom.startingSpeedScalar;
+      let p0 = gg.custom.p0;
+      let p1 = gg.custom.p1;
+      // this.position.copy( this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)) );
+      gg.position.x = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.001+_s)*__dats.speed ).x;
+      gg.position.y = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.002+_s)*__dats.speed ).y;
+      gg.position.z = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.003+_s)*__dats.speed ).z;
+      
+    }
+    
+    
+    // second part, we are doing a Baaaaaasic floor collision test to change the colors
     // mainGameUpdate();
     // this is the slowest form of collision detection
     
@@ -142,47 +187,6 @@ export class NotPac extends Game{
     // Can move this logic into each object as an ecs
     
     const wobjects = this.sceneGrapth.objects;
-    // console.log("nn", this.system.time.now);
-    for (var i = 0; i < wobjects.length; i++) {
-      
-      let gg = wobjects[i];
-      
-      let yy = gg.custom.yy;
-      
-      if(yy === -1){
-        yy = this.system.gameWidth/8;
-      }
-      
-      if(gg.custom.basePos === null){
-        gg.custom.basePos = gg.position.clone();
-        let basePos = gg.custom.basePos;
-        const _s = 0.5;
-        gg.custom.p0.copy(basePos).multiplyScalar(1.1).negate();
-        gg.custom.p1.copy(basePos).multiplyScalar(1.1);
-        gg.custom.startingSpeedScalar = randomInRange(0,0.5);
-        // inverseLerp
-        
-      }
-      
-      // console.log("¿");
-      
-      // bb.scale.setScalar(randomInRange(0.05,0.1))
-      // bb.position.fromArray(random3InRange(-200,200));
-      // console.log(yy);
-      // this.position.x += randomInRange(-yy,yy)
-      // this.position.y = randomInRange(-yy,yy);
-      // this.position.z = randomInRange(-yy,yy);
-      
-      // this.position.x = this.workV.lerpVectors(this.p0,this.p1, Math.abs(Math.cos(this.position.x))).x;
-      let _s = gg.custom.startingSpeedScalar;
-      let p0 = gg.custom.p0;
-      let p1 = gg.custom.p1;
-      // this.position.copy( this.workV.lerpVectors(this.p0,this.p1, Math.cos(this.system.time.now*0.001+_s)) );
-      gg.position.x = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.001+_s)*__dats.speed ).x;
-      gg.position.y = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.002+_s)*__dats.speed ).y;
-      gg.position.z = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.003+_s)*__dats.speed ).z;
-      
-    }
     
     super.drawFrame();
     
