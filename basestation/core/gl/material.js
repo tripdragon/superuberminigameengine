@@ -14,6 +14,9 @@ export class Material{
   programInfo;
   opacity = 1;
   
+  // simple debugger mostly
+  wireframe = false;
+  
   constructor({gl,color=0xffffff}={}){
     this.gl = gl;
     

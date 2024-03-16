@@ -198,23 +198,23 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
     // ff.draw(this.colorUniformLocation, 
       // this.matrixUniformLocation, this.textureLocation);
     
-    const vertexCount = ff.pointsCount;
-    
-    // CHANGE these to draw_elements
-    
-    // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays
-    if(ff.subType === "wirefornow" || ff.renderType === "wires"){
-      // boo no width option
-      // gl.lineWidth(10);
-      // console.log(gl.getParameter(gl.ALIASED_LINE_WIDTH_RANGE))
-      // gl.drawArrays(gl.LINES, offset2, vertexCount);
-      // gl.drawArrays(gl.LINE_STRIP, offset2, vertexCount);
-      gl.drawArrays(gl.LINE_LOOP, offset2, vertexCount);
-    }
-    else {
-      // console.log("¿¥¥∑");
-      // gl.drawArrays(primitiveType, offset2, vertexCount);
-      gl.drawArrays(gl.TRIANGLES, offset2, vertexCount);
+    if (ff.isMesh) {
+      
+      const vertexCount = ff.pointsCount;
+      
+      // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays
+      if(ff.material && ff.material.wireframe === false){
+        // boo no width option
+        // gl.lineWidth(10);
+        // console.log(gl.getParameter(gl.ALIASED_LINE_WIDTH_RANGE))
+        
+        gl.drawArrays(gl.TRIANGLES, offset2, vertexCount);
+      }
+      if(ff.material && ff.material.wireframe === true){
+        gl.drawArrays(gl.LINE_LOOP, offset2, vertexCount);
+        // console.log("¿¥¥∑");
+      }
+      
     }
     
   }

@@ -1,5 +1,6 @@
 
 import {Game} from "game";
+import {CheapPool} from "utilites/cheapPool.js";
 import {ScreenSpace} from "pipelines/screenSpace.js";
 // import {CheapPool} from "utilites/cheapPool.js";
 
@@ -20,6 +21,9 @@ export class NotPac extends Game{
   
 
   // camera = {x:0,y:0,z:0}
+  
+  groupA = new CheapPool();
+  groupDebug = new CheapPool();
   
   constructor(props){
     super({name:"Not Pac 444", ...props});
@@ -56,6 +60,7 @@ export class NotPac extends Game{
       bb.position.z = randomInRange(-yy,yy);
       
       this.sceneGrapth.add(bb);
+      this.groupA.add(bb);
       
       bb.custom.mColor = bb.material.color.clone();
       bb.custom.isFlipped = false;
@@ -71,6 +76,45 @@ export class NotPac extends Game{
       bb.custom.startingAlpha = 0;
       bb.custom.yy = -1;
     }
+    
+    
+    
+    // debugger items
+    for (var i = 0; i < 122; i++) {
+      
+      const bb = new Plane({system:this.system, gl:this.gl, width:100,height:100, colorHex:0x222222});
+      // bb.rotation.y = -0.2;
+      bb.scale.setScalar(randomInRange(0.05,0.1))
+      // bb.position.fromArray(random3InRange(-200,200));
+      let yy = this.system.gameWidth/8;
+      console.log(yy);
+      bb.position.x = randomInRange(-yy,yy);
+      bb.position.y = randomInRange(-yy,yy);
+      bb.position.z = randomInRange(-yy,yy);
+      
+      this.sceneGrapth.add(bb);
+      this.groupDebug.add(bb);
+      
+      bb.custom.mColor = bb.material.color.clone();
+      bb.custom.isFlipped = false;
+      bb.custom.crossfadeAlpha = 0;
+      bb.custom.colorA = new Color().setHex(0x6f5cff);
+      bb.custom.colorB = new Color().setHex(0xffef5c);
+      bb.custom.colorC = new Color().setHex(0xff5c64);
+      
+      bb.custom.basePos = null;
+      bb.custom.p0 = new Vector3();
+      bb.custom.p1 = new Vector3();
+      bb.custom.startingSpeedScalar = 0;
+      bb.custom.startingAlpha = 0;
+      bb.custom.yy = -1;
+      
+      bb.material.wireframe = true;
+      
+    }
+    
+    
+    
     
   }
   
@@ -88,7 +132,8 @@ export class NotPac extends Game{
   
   beforeDraw(){
     
-    const wobjects = this.sceneGrapth.objects;
+    // const wobjects = this.sceneGrapth.objects;
+    const wobjects = this.groupA;
     
     // first part moves the objects, this could go into an ecs thingy
     // console.log("nn", this.system.time.now);
@@ -160,6 +205,7 @@ export class NotPac extends Game{
         // console.log("alpha", gg.custom.crossfadeAlpha, alpha);
         gg.material.color.lerpColors(gg.custom.colorA, gg.custom.colorB, alpha);
         gg.setColorRGB(gg.material.color);
+        // gg.material.wireframe = false;
         
       }
       else if (gg.position.y > 0) {
@@ -172,6 +218,8 @@ export class NotPac extends Game{
         // console.log("alpha", gg.custom.crossfadeAlpha, alpha);
         gg.material.color.lerpColors(gg.custom.colorA, gg.custom.colorC, alpha);
         gg.setColorRGB(gg.material.color);
+        // gg.setColorRGB({r:1,g:0,b:0});
+        // gg.material.wireframe = true;
       }
       
       
@@ -181,6 +229,25 @@ export class NotPac extends Game{
       // gg.setColorRGB(gg.material.color);
       
     }
+    
+    // 
+    // debug copy code
+    // 
+    const wobjects2 = this.groupDebug;
+    
+    // first part moves the objects, this could go into an ecs thingy
+    // console.log("nn", this.system.time.now);
+    for (var i = 0; i < wobjects2.length; i++) {
+      
+      let gg = wobjects2[i];
+      
+      gg.position.copy(this.groupA[i].position)
+      gg.scale.copy(this.groupA[i].scale)
+      
+    }
+    
+    
+    
     
   }
 
