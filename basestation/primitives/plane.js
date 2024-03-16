@@ -105,11 +105,11 @@ export class Plane extends Mesh {
       
     }
 
-    
-        
-        update(){
-          
-        }
+    // use ecs system
+    // 
+    // update(){
+    // 
+    // }
 
 
 }

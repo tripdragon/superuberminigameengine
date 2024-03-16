@@ -181,8 +181,6 @@ export class NotPac extends Game{
       gg.position.x = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.001+_s)*__dats.speed ).x;
       gg.position.y = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.002+_s)*__dats.speed ).y;
       gg.position.z = this.workV.lerpVectors(p0,p1, Math.cos(this.system.time.now*0.003+_s)*__dats.speed ).z;
-      // this.position.y = randomInRange(-yy,yy);
-      // this.position.z = randomInRange(-yy,yy);
       
     }
     
@@ -193,10 +191,10 @@ export class NotPac extends Game{
   
 }
 
-
-function mainGameUpdate() {
-  // console.log("super not paci 222b!!");
-}
+// 
+// function mainGameUpdate() {
+//   // console.log("super not paci 222b!!");
+// }
 
 function keys(ev) {
   
