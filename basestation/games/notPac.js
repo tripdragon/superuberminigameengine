@@ -120,6 +120,7 @@ export class NotPac extends Game{
   
   
   unload(){
+    super.unload();
     document.removeEventListener("keydown", keys);
   }
   

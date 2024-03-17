@@ -68,6 +68,7 @@ function redraw({shaderProgram,scene,gl,programInfo,sceneGrapth,camera}){
 
   // Clear the canvas before we start drawing on it.
   // Tell WebGL how to convert from clip space to pixels
+  // this is wrong, it should be system.gameWidth
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   
   

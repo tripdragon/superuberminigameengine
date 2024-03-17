@@ -1,5 +1,11 @@
 
 
+class CacheLayers{
+  main = [];
+  colliders = []; // if it collides you can then deicde if it was just a trigger
+  platforms = []; // plane objects
+}
+
 export class SceneGrapth{
 
   
@@ -16,12 +22,13 @@ export class SceneGrapth{
   actors = [];
   
   // 
-  layers = {
-    main: [],
-    colliders : [], // if it collides you can then deicde if it was just a trigger
-    platforms : [], // plane objects
-    // triggers : []
-  }
+  // layers = {
+  //   main: [],
+  //   colliders : [], // if it collides you can then deicde if it was just a trigger
+  //   platforms : [], // plane objects
+  //   // triggers : []
+  // }
+  layers = new CacheLayers();
   
   // need to add compare istype etc
   add(thingy){
@@ -34,6 +41,8 @@ export class SceneGrapth{
       if(!thingy.system){
       }
       thingy.system = this.system;
+      thingy.sceneGrapth = this;
+      
       // debugger
       
       if(thingy.canCollide){
@@ -61,6 +70,19 @@ export class SceneGrapth{
       }
       
     }
+  }
+  
+  // this removes all objects in scene and resets
+  reset(){
+    // need to dup the array cause the objects themselves mutate the scenegrapth
+    // could fix that
+    const _objects = this.objects.slice();
+    for (var i = 0; i < _objects.length; i++) {
+      _objects[i].delete();
+    }
+    this.objects.length = 0;
+    this.actors.length = 0;
+    this.layers = new CacheLayers();
   }
   
 }

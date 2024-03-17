@@ -16,6 +16,13 @@ import {PerspectiveCamera,OrthographicCamera} from "primitives/camera.js";
 
 // import {Matrix4} from "modules/matrix4.js";
 
+// for quickAccess {}
+// import {Vector3} from "modules/vector3.js";
+// import {Plane} from "primitives/plane.js";
+// import {Plane} from "primitives/plane.js";
+import {QuickAccess} from "./quickAccess.js";
+
+
 export class BaseStation{
   
   currentGame = null; // shoudl become an array, and this be a get()
@@ -45,6 +52,9 @@ export class BaseStation{
   
   // projectionMatrix = null;
   
+  // // for window level commands
+  quickAccess = null;
+
   constructor({name="", canvasId=""}={}){
     this.name = name; 
     if (canvasId !== "") this.canvas = document.getElementById(canvasId);
@@ -57,13 +67,17 @@ export class BaseStation{
       return;
     }
     this.bootUp_CM();
+    this.quickAccess = new QuickAccess(this);
   }
   
 
   unloadDisc(){
     if(this.currentGame){
       this.currentGame.unload();
-      this.currentGame = null;
+      // we need to draw once again before this can clear the view
+      // so need to change the loop
+      // this.currentGame = null;
+      this.clearScreen();
     }
   }
   
@@ -132,12 +146,24 @@ export class BaseStation{
   // window.innerWidth
   // window.innerHeight roughly...
   get gameWidth(){
-    // return this.gl.canvas.width;
     return this.gl.canvas.clientWidth;
   }
   get gameHeight(){
-    // return this.gl.canvas.height;
     return this.gl.canvas.clientHeight;
   }
+  
+  clearScreen(){
+    const gl = this.gl;
+    gl.clearColor(0,0,1,0);
+    gl.clearDepth(1.0); // Clear everything
+    gl.disable(gl.DEPTH_TEST); // Enable depth testing
+    // gl.viewport(0, 0, this.gameWidth, this.gameHeight);
+    gl.viewport(0, 0, this.gameWidth, this.gameHeight);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  }
+  
+  
+  
+
   
 }

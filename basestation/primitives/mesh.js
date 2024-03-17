@@ -30,7 +30,7 @@ export class Mesh extends Quark{
   // programInfo = null;
   loadedTexture = false;
   hasSetupdataBuffer = false;
-  positionsBufferLocal = null;
+  // positionsBufferLocal = null;
   textureCoordBuffer = null;
   cachedImageURL = null;
   
@@ -42,6 +42,7 @@ export class Mesh extends Quark{
   hasGLInit = false;
   
   positionsBuffer = null;
+  colorsBuffer = null;
   
   // vertex array object
   vao = null;
@@ -67,12 +68,34 @@ export class Mesh extends Quark{
     vec.set(this.positions[index],this.positions[index+1], this.positions[index+2]);
   }
   // getColorFromBuffer(index,col){
-  //   col.set(this.colorBuffer[index], this.colorBuffer[index+1], this.colorBuffer[index+2]);
+  //   col.set(this.colorsBuffer[index], this.colorsBuffer[index+1], this.colorsBuffer[index+2]);
   // }
 
-  // +++++++++++
-  // GL copy over
   
+  delete(){
+    super.delete();
+    this.gl.deleteBuffer(this.positionsBuffer);
+    this.gl.deleteBuffer(this.colorsBuffer);
+    // for (var i = 0; i < this.friends.length; i++) {
+    //   this.friends[i]
+    // 
+    // }
+  }
+  
+  clearGLBuffers(){
+    this.traverse(function(x){
+      x.delete();
+    })
+  }
+  
+  traverse( callback ) {
+		callback( this );
+		const ff = this.friends;
+		for ( let i = 0, l = ff.length; i < l; i ++ ) {
+			ff[ i ].traverse( callback );
+		}
+	}
+
   // 
   // 
   // #drawing routines
@@ -126,8 +149,8 @@ export class Mesh extends Quark{
     }
 
     // { // temp color display
-    //   this.colorBuffer = gl.createBuffer();
-    //   gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+    //   this.colorsBuffer = gl.createBuffer();
+    //   gl.bindBuffer(gl.ARRAY_BUFFER, this.colorsBuffer);
     //   const cc = [];
     //   const len = 3*2*3; // 3 points * t tris * rgb slots
     //   for (var i = 0; i < len; i++) {
@@ -139,8 +162,8 @@ export class Mesh extends Quark{
     // }
     
     { // basic vertex coloring
-      this.colorBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+      this.colorsBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.colorsBuffer);
       
       // same count as positions
       this.colors = new Float64Array(this.positions.length);
@@ -233,7 +256,7 @@ export class Mesh extends Quark{
         // this.setColorHex(0x000000)
         
         gl.enableVertexAttribArray(this.material.programInfo.attribLocations.color);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.colorsBuffer);
         const numComponents = 3;
         const type = gl.FLOAT; // the data in the buffer is 32bit floats
         // const type = gl.UNSIGNED_BYTE;  // the data is 8bit unsigned values

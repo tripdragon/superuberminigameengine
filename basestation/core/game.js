@@ -54,7 +54,9 @@ export class Game{
     this.load();
   }
   load(){}
-  unload(){}
+  unload(){
+    this.sceneGrapth.reset();
+  }
   // not as simple at unity, we need to do stuff before drawing
   // and we dont yet have physics states etc, so naming
   // will reflect procedural steps in GL

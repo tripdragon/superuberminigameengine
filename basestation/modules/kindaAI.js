@@ -1,22 +1,32 @@
 a = "10 cats fly around a dog"
 b = a.split(" ")
 
-+b[0]
-isNaN(b[1])
+// 
+// +b[0]
+// isNaN(b[1])
 
-animals = {
-  "cat":0,
-  "dog":1,
-  "whale":2,
-  "giraffe":3,
-  "fish":4
+// animals = {
+//   "cat":0,
+//   "dog":1,
+//   "whale":2,
+//   "giraffe":3,
+//   "fish":4
+// }
+
+// let isS = str.substr(-1);
+
+// is number
+
+// is next a noun
+
+
+// only checks for "s" right now, so "walrus" would be false
+// "i" or "es" fishes wont work, wellll fishes would....
+function isKindaPural(word) {
+  let bb = word.toLowerCase().substr(-1);
+  if (bb === "s") return true;
+  return false;
 }
-
-let isS = str.substr(-1);
-
-is number
-
-is next a noun
 
 function isNoun(word){
   if(word.noun) return true;
@@ -121,3 +131,17 @@ var dictionary = {
 //       animals[prop] = dictionary[prop];
 //     }
 // }
+
+
+a = "10 cats fly around a dog"
+b = a.split(" ")
+
+10 + cats
+cats + fly
+fly + around
+a / scratch
+around + dog
+dog ? .
+
+
+foreach and for each

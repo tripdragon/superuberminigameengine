@@ -48,17 +48,7 @@
 
 
     <script type="text/javascript">
-        // var _o;
-        
-        // these are needed here for now cause the gl-matrix plugin is not import type module
-        // todo: swap out
-        // const { vec2, vec3, mat3, mat4 } = glMatrix;
 
-        // APPPP.model1 = {
-        //   pos.
-        // }
-        
-        // var onConsole;
         
     </script>
 
@@ -105,7 +95,23 @@
       // _o.insertDisc(starter);
       
       _b.insertDisc({game:NotPac});
-    
+      
+      
+      // expose some core use functions
+      
+      window.clearGame = function(){
+        _m.baseStation.currentGame.sceneGrapth.reset();
+      }
+      
+      window.addPlane = function({width=10, height=10, colorHex=0x0044a3}={}){
+        return _m.baseStation.quickAccess.addPlane({width:width,height:height, colorHex:colorHex});
+      }
+      window.addManyPlanes = function(props){
+        return _m.baseStation.quickAccess.addManyPlanes(props);
+      }
+      
+      
+      
 
     </script>
     

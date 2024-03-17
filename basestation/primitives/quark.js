@@ -2,6 +2,7 @@
 import {Vector3} from "modules/vector3.js";
 import {Matrix4} from "modules/matrix4.js";
 import {CheapPool} from "utilites/cheapPool.js";
+import {Entities} from "modules/basicEntities.js";
 
 
 // need to multiply spoed matrixes not localMatrix
@@ -19,7 +20,14 @@ export class Quark {
   // programInfo = null;
   visible = true;
   
+  sceneGrapth = null; // sceneGrapth adds this when its .add to it
+  
+  // just some place to put on load datas
   custom = {}
+  
+  // entities = new Entities(this);
+  // this.entities.add(new Walk());
+  entities = null;
   
   needsUpdateMatrixLocal = false;
   
@@ -63,10 +71,14 @@ export class Quark {
     this.system = system;
     // debugger
     this.gl = gl;
+    
+    this.entities = new Entities(this);
   }
   
   
-  update(){}
+  update(){
+    this.entities.run();
+  }
   
   play(){}
   
@@ -291,9 +303,18 @@ export class Quark {
       this.parent.remove(this);
     }
     
-    this.system.sceneGrapth.remove(this);
+    try {
+      this.sceneGrapth.remove(this);
+    } catch (err) {
+      debugger
+      throw new Error("New error message", { cause: err });
+    }
+    // this.system.sceneGrapth.remove(this);
     
     console.warn("need to check if this REEAAAALLLY clears the buffers and such");
+    
+    
+    
   }
   
   
