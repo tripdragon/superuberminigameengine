@@ -1,4 +1,6 @@
 
+// node kindaAI.js
+
 // only checks for "s" right now, so "walrus" would be false
 // "i" or "es" fishes wont work, wellll fishes would....
 function isKindaPural(word) {
@@ -76,7 +78,7 @@ const prepositions = [
 
 // foreach and for each
 
-a = "10 cats fly around a dog."
+// a = "10 cats fly around a dog."
 
 // console.log('b', b);
 
@@ -100,7 +102,7 @@ const parsedDictionary = Object.entries(dictionary).reduce((newDict, [category, 
 
 const ignoreWords = ["a", "the", "now"];
 
-console.log("parsedDictionary", parsedDictionary);
+// console.log("parsedDictionary", parsedDictionary);
 
 const hasTag = (item, tag) => item.tags.includes(tag);
 
@@ -134,11 +136,11 @@ const parseStatementToActionObject = (statement) => {
     const dictMatch = parsedDictionary[formattedWord];
 
     if (!dictMatch) {
-      console.warn('WARNING NO DICTIONARY MATCH');
+      console.warn('WARNING NO DICTIONARY MATCH for :', formattedWord);
       return collector;
     }
 
-    newInfo = {};
+    const newInfo = {};
 
     if (!collector[dictMatch.name] && hasTag(dictMatch, 'noun')) {
       newInfo.subject1 = { ...dictMatch };
@@ -155,7 +157,9 @@ const parseStatementToActionObject = (statement) => {
 };
 
 // parseStatement("10 cats fly around a dog");
-parseStatementToActionObject("3 dogs sleep under a tree");
+// parseStatementToActionObject("3 dogs sleep under a tree");
 
 // We're looking to build an object to parse the sentence into.
 //
+
+export {parseStatementToActionObject, hasTag, ignoreWords, parsedDictionary, prepositions, isKindaPural, isNoun, isNumber, dictionary}
