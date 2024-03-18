@@ -6,7 +6,7 @@
 ++
 "10 birbs flying around a dog"
 
-grammar: subject: 10 birds, verb: flying, story(word): around, object: dogs
+grammar: subject: 10 birds, verb: flying, story(word): around, object: dog
 
 composition: around(flying(birds[10])),dog)
 

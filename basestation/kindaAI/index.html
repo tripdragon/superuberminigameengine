@@ -14,16 +14,28 @@
     <link rel="icon" type="image/png" sizes="16x16" href="../favico/favicon-16x16.png">
     <!-- <link rel="manifest" href="/site.webmanifest"> -->
 
-    <script src="./aiTextInput.js" charset="utf-8"></script>
+    <script src="./aiTextInput.js" ></script>
+    
+    <style media="screen">
+      #magicbox{
+        width: 400px;
+        /* border: solid 1px green; */
+        display: block;
+      }
+    </style>
     
   </head>
 
   <body>
     
-    <ai-text>d dfg</ai-textinput>
+    <ai-textinput id="magicbox"></ai-textinput>
     
     <script type="text/javascript">
-
+      
+      const magicbox = document.getElementById("magicbox");
+      magicbox.addEventListener("send",(ev)=>{
+        console.log("have : ", ev.detail);
+      });
         
     </script>
 
