@@ -23,6 +23,25 @@
       }
     </style>
     
+    <!-- custom element -->
+    <script src="./kindaAI/aiTextInput.js" ></script>
+    
+    <style media="screen">
+      #canvassss{
+          /* position: absolute; */
+          /* z-index: 0; */
+      }
+      #magicbox{
+        width: 400px;
+        /* border: solid 1px green; */
+        display: block;
+        z-index: 2;
+        position: absolute;
+        bottom: 0;
+        right:0;
+      }
+    </style>
+    
     <!-- TEMP TEMPY TEMP untill we have our own custom component again -->
     <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.19"></script>
 
@@ -31,6 +50,7 @@
 
   <body>
 
+    <ai-textinput id="magicbox"></ai-textinput>
     
     <canvas id="canvassss" width="400" height="400"></canvas>
 
@@ -157,5 +177,22 @@
     // gui.add( __dats, 'r2z', 0, Math.PI*4 );
 
     </script>
+    
+    
+    <!-- handle tools space -->
+    <script type="text/javascript">
+      
+      const magicbox = document.getElementById("magicbox");
+      magicbox.addEventListener("send",(ev)=>{
+        console.log("have : ", ev.detail);
+        if (ev.detail === "neat!") {
+          clearGame()
+          addManyPlanes({span:20,width:2,height:2,count:100,colorHex:"random"})
+        }
+      });
+        
+    </script>
+    
+    
   </body>
 </html>
