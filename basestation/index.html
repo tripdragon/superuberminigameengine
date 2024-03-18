@@ -129,6 +129,10 @@
       window.addManyPlanes = function(props){
         return _m.baseStation.quickAccess.addManyPlanes(props);
       }
+      // acepts single object or array
+      window.spin = function(item){
+        return _m.baseStation.quickAccess.spin(item);
+      }
       
       
       
@@ -188,7 +192,7 @@
         const magicspeel = ev.detail;
         if (magicspeel === "neat!") {
           clearGame()
-          addManyPlanes({span:20,width:2,height:2,count:100,colorHex:"random"});
+          spin( addManyPlanes({span:20,width:2,height:2,count:100,colorHex:"random"}) )
         }
         else if(magicspeel !== ""){
           eval(magicspeel);

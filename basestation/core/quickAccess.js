@@ -36,11 +36,25 @@ export class QuickAccess{
       this.system.currentGame.sceneGrapth.add(aa);
       aa.position.x = randomInRange(-span, span);
       aa.position.y = randomInRange(-span, span);
-      Spin(aa)
+      // Spin(aa)
       nn.push(aa);
     }
     return nn;
   }
+  
+  
+  spin(item){
+    if (Array.isArray(item)) {
+      item.map((y)=>{
+        _spin(y);
+      })
+    }
+    else {
+      _spin(item);
+    }
+    return item;
+  }
+  
   
 }
 
@@ -62,7 +76,7 @@ class Spin_ extends Enty {
   }
 }
 
-function Spin(item, speed = 1) {
+function _spin(item, speed = 1) {
   let aa = new Spin_("spin");
   item.entities.add(aa);
 }
