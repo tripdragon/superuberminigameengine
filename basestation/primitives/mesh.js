@@ -7,6 +7,7 @@ import {Vector3} from "modules/vector3.js";
 import {Matrix4} from "modules/matrix4.js";
 import {Color} from "modules/color.js";
 import {Box3} from "modules/box3.js";
+import {requestCORSIfNotSameOrigin} from "utilites/imageLoad.js";
 
 // import {buildProgramInfo} from "gl/programInfo.js";
 // import {initShaderProgramFlatShader} from "gl/shaders.js";
@@ -76,6 +77,7 @@ export class Mesh extends Quark{
     super.delete();
     this.gl.deleteBuffer(this.positionsBuffer);
     this.gl.deleteBuffer(this.colorsBuffer);
+    this.gl.deleteBuffer(this.textureCoordBuffer);
     // for (var i = 0; i < this.friends.length; i++) {
     //   this.friends[i]
     // 
@@ -170,7 +172,7 @@ export class Mesh extends Quark{
       
       this.assignColors(this.material.color);
       this.colorGLNeedsUpdate = true;
-      
+  
       // gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(cc), gl.STATIC_DRAW);
       // gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array(cc), gl.STATIC_DRAW);
       // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(new Array(len).fill(0.01)), gl.STATIC_DRAW);
@@ -183,6 +185,8 @@ export class Mesh extends Quark{
     { // building initial texture
       
       // Fill the texture with a 1x1 blue pixel.
+      
+      // this might should be a local const
       this.texture = gl.createTexture();
       
       this.textureCoordBuffer = gl.createBuffer();
@@ -192,13 +196,31 @@ export class Mesh extends Quark{
       
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW );
 
-
+      
+      gl.enableVertexAttribArray(this.material.programInfo.attribLocations.texture);
+            
+            
+      // Tell the attribute how to get data out of texcoordBuffer (ARRAY_BUFFER)
+      const size = 2;          // 2 components per iteration
+      const type = gl.FLOAT;   // the data is 32bit floating point values
+      const normalize = true;  // convert from 0-255 to 0.0-1.0
+      const stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next texcoord
+      const offset = 0;        // start at the beginning of the buffer
+      gl.vertexAttribPointer(this.material.programInfo.attribLocations.texture, size, type, normalize, stride, offset);
+      
       gl.bindTexture(gl.TEXTURE_2D, this.texture);
       
-      gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE,
-        // new Uint8Array([this.color.r*255, this.color.g*255, this.color.b*255, 255]));
-        new Uint8Array([1*255, 1*255, 1*255, 255]));
+      // Fill the texture with a 1x1 blue pixel.
+      // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 255, 255, 255]));
+                  
+
+      // 
+      // gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE,
+      //   // new Uint8Array([this.color.r*255, this.color.g*255, this.color.b*255, 255]));
+      //   new Uint8Array([1*255, 1*255, 1*255, 255]));
     }
+    
 
 
 
@@ -284,6 +306,23 @@ export class Mesh extends Quark{
 
   }
   
+
+
+  loadImage(src){
+    const _texture = this.texture;
+    // Asynchronously load an image
+    var image = new Image();
+    const gl = this.gl;
+    // image.src = "http://localhost:8001/sprites/NFT_gradprix_uponcat.png";
+    requestCORSIfNotSameOrigin(image,src);
+    image.src = src;
+    image.addEventListener('load', function() {
+      // Now that the image has loaded make copy it to the texture.
+      gl.bindTexture(gl.TEXTURE_2D, _texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+      gl.generateMipmap(gl.TEXTURE_2D);
+    });
+  }
 
   
 }

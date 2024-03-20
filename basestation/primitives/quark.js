@@ -36,7 +36,7 @@ export class Quark {
   left = new Vector3(-1,0,0);
   right = new Vector3(1,0,0);
   forward = new Vector3(0,1,0);
-  backwards = new Vector3(0,-1,0);
+  back = new Vector3(0,-1,0);
   
   
   position = new Vector3(0,0,0);
@@ -152,55 +152,6 @@ export class Quark {
       this.needsUpdateMatrixLocal = false;
     }
     
-    
-    // does not work to cache a matrix update yet
-    // if(!this.mPosition.equals(this.position)){
-    // 
-    //   this.mPosition.copy(this.position);
-    //   console.log("refreshMatrixes");
-    // 
-    //   // this.localMatrix.setTranslation(this.position.x,this.position.y,this.position.z);
-    //   // 
-    //   //         // debugger
-    //   //         // this.localMatrix.translate(this.position.x,this.position.y,this.position.z);
-    //   // 
-    //   // 
-    //   // this.updateWorldMatrix();
-    //   // 
-    // }
-    
-    
-    // this performs the matrix updates for now
-    // this one applys the position translation
-    // this.u_matrix.setTranslation(0,0,0);
-    
-    // this is most likely not the right way to do this, but its working for now
-    // this.u_matrix.identity().multiply(this.system.projectionMatrix);
-    // this.localMatrix.identity().multiply(this.system.projectionMatrix);
-    // this.localMatrix.setTranslation(this.position.x,this.position.y,this.position.z);
-
-        // 
-        // this.localMatrix.copy(this.system.projectionMatrix);
-        // this.localMatrix.translate(this.position.x,this.position.y,this.position.z);
-
-        // debugger
-    // 
-    // this.localMatrix.setTranslation(this.position.x,this.position.y,this.position.z);
-    // 
-    //         // debugger
-    //         // this.localMatrix.translate(this.position.x,this.position.y,this.position.z);
-    // 
-    // 
-    // // this.updateWorldMatrix();
-    // 
-    // if(this.parent){
-    //   this.worldMatrix.multiplyMatrices(this.parent.worldMatrix, this.localMatrix);
-    // }
-    // else {
-    //   this.worldMatrix.copy(this.localMatrix);
-    // }
-    
-    // 
   }
   
   

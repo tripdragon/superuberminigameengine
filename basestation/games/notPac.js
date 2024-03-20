@@ -75,6 +75,11 @@ export class NotPac extends Game{
       bb.custom.startingSpeedScalar = 0;
       bb.custom.startingAlpha = 0;
       bb.custom.yy = -1;
+      
+      // bb.loadImage("http://localhost:8001/sprites/NFT_gradprix_uponcat.png");
+      // bb.loadImage("./sprites/NFT_gradprix_uponcat.png");
+      bb.loadImage("./sprites/NFT_NFT_NFT_could_this_becat2.png");
+      
     }
     
     

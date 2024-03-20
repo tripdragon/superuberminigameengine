@@ -13,18 +13,13 @@ in vec3 a_color;
 
 in vec2 a_texCoord;
 
-// not yet
-precision mediump float;
-uniform vec4 u_color;
-// uniform vec3 u_color;
+
+// we seem to not be using this at all
+// precision mediump float;
+// uniform vec4 u_color;
 
 uniform mat4 u_matrix;
 
-
-// not yet
-// uniform mat4 uModelViewMatrix;
-// not yet
-// uniform mat4 uProjectionMatrix;
 
 out vec4 v_color;
 out vec2 v_texCoord;
@@ -32,21 +27,40 @@ out vec2 v_texCoord;
 void main() {
   gl_Position = u_matrix * a_position;
   v_color = vec4(a_color.r,a_color.g,a_color.b, 1);
+  v_texCoord = a_texCoord;
 }
 `;
+
+
+// -------
+
 
 const fShaderB = `#version 300 es
 precision mediump float;
 in vec4 v_color;
-// in vec3 v_color;
 
-// // not yet
-// precision mediump float;
-// uniform vec4 u_color;
+
+in vec2 v_texCoord;
+
+// this is local, you dont reference it outside of shader
+uniform sampler2D u_texture;
+
 
 out vec4 magicColor;
+
 void main() {
-    magicColor = v_color;
+    vec4 image = texture(u_texture, v_texCoord);
+    
+    // magicColor = v_color;
+    // magicColor = texture(u_texture, v_texCoord);
+    
+    magicColor = vec4(v_color.rgb * image.rgb, 1);
+    
+    
+    
+    
+    // magicColor = vec4(v_color.rgb * image.rgb, 1);
+    // magicColor = vec4(vec3(1,1,1).rgb, 1);
     // magicColor = vec4(0,1,0,1);
     // magicColor = vec4(v_color.r,v_color.g,v_color.g, 1);
 }

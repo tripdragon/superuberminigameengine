@@ -68,6 +68,10 @@ export class BaseStation{
     }
     this.bootUp_CM();
     this.quickAccess = new QuickAccess(this);
+    
+    // fix all images loaded y flip
+    this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
+
   }
   
 
@@ -109,6 +113,7 @@ export class BaseStation{
     this.perspectiveCamera = new PerspectiveCamera(35,this.gameWidth/this.gameHeight,0.01,1000);
     this.orthographicCamera = new OrthographicCamera(0,this.gl.canvas.clientWidth, 0, this.gl.canvas.clientHeight,400,-400);
     this.swapCamera('p');
+    // this.swapCamera('o');
 
   }
   

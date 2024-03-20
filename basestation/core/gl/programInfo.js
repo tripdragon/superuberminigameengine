@@ -48,7 +48,7 @@ export function buildProgramInfo({gl,shaderProgram,screenMode="2d"}={}){
     uniformLocations: {
       // projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
       // modelViewMatrix:  gl.getUniformLocation(shaderProgram, "uModelViewMatrix"),
-      color:            gl.getUniformLocation(shaderProgram, "u_color"),
+      // color:            gl.getUniformLocation(shaderProgram, "u_color"),
       modelMatrix:      gl.getUniformLocation(shaderProgram, "u_matrix")
       // mNarfs:      gl.getUniformLocation(shaderProgram, "u_mnarfs")
     },

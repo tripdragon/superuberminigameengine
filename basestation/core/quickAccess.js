@@ -18,7 +18,7 @@ export class QuickAccess{
   addPlane({width=10, height=10, colorHex=0x0044a3}={}){
     const aa = new Plane({system:this.system, gl:this.system.gl, width:width,height:height, colorHex:colorHex});
     this.system.currentGame.sceneGrapth.add(aa);
-    Spin(aa);
+    // Spin(aa);
     return aa;
   }
   

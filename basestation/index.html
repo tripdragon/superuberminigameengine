@@ -116,15 +116,35 @@
       
       _b.insertDisc({game:NotPac});
       
+      window.currentPlane = null;
       
       // expose some core use functions
+      
+
+      /*
+      clearGame()
+      spin( addManyPlanes({span:20,width:2,height:2,count:100,colorHex:"random"}) )
+
+      clearGame()
+      mockin("10 dogs")
+      
+      clearGame()
+      addPlane({colorHex:0x5c5cff})
+      
+      window.currentPlane.setColorHex(0xffffff)
+      window.currentPlane.loadImage("./sprites/NFT_NFT_NFT_could_this_becat2.png");
+      window.currentPlane.position.x= 10
+      
+      */
       
       window.clearGame = function(){
         _m.baseStation.currentGame.sceneGrapth.reset();
       }
       
+      
       window.addPlane = function({width=10, height=10, colorHex=0x0044a3}={}){
-        return _m.baseStation.quickAccess.addPlane({width:width,height:height, colorHex:colorHex});
+        window.currentPlane = _m.baseStation.quickAccess.addPlane({width:width,height:height, colorHex:colorHex});
+        return window.currentPlane;
       }
       window.addManyPlanes = function(props){
         return _m.baseStation.quickAccess.addManyPlanes(props);
@@ -133,6 +153,17 @@
       window.spin = function(item){
         return _m.baseStation.quickAccess.spin(item);
       }
+      
+      window.mockin = function(phrase){
+        const aa = phrase.split(" ");
+        let yy = addManyPlanes({span:+aa[0],width:2,height:2,count:100,colorHex:"random"})
+        yy.map(x=>{
+          x.loadImage("./sprites/NFT_NFT_NFT_could_this_becat2.png");
+          // x.setColorHex(0xffffff)
+        })
+      }
+      
+      
       
       
       
@@ -146,7 +177,7 @@
     const __dats = {
       x : 0,
       y : 0,
-      z : -148,
+      z : 148, // backing up in +z it seems
       rz : 0,
       ry : 1.33831847042925,
       fov : 129,
