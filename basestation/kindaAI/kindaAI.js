@@ -116,6 +116,7 @@ const parseStatementToActionObject = (statement) => {
     subject: '', // First noun we encounter
     number: '', // First num we encounter
     adjective: '', // Arr of adjectives encountered before a preposition
+    verb: '', // First verb we encounter
     preposition: '', // First preposition we encounter
     prepositionObj: '', // 2nd noun we encounter
     prepositionObjAdjective: '', // Rest of the adjectives we encounter
@@ -151,7 +152,7 @@ const parseStatementToActionObject = (statement) => {
 
     const isNoun = hasTag(wordObj, "nouns");
     const isAdjective = hasTag(wordObj, "adjective");
-
+    const isVerb = hasTag(wordObj, "verbs");
     const isPreposition = hasTag(wordObj, "prepositions");
 
     if (!actionObject.subject && isNoun) {
@@ -163,13 +164,16 @@ const parseStatementToActionObject = (statement) => {
     else if (isAdjective) {
       actionObject.adjectives.push(wordObj);
     }
+    else if (isVerb) {
+      actionObject.verb = wordObj;
+    }
     else if (isPreposition) {
       actionObject.preposition = wordObj;
     }
   }, {});
 
   console.log("splitStatement", splitStatement);
-  console.log('actionObject AFTER', actionObject);
+  console.log("actionObject AFTER", actionObject);
 };
 
 // parseStatement("10 cats fly around a dog");
