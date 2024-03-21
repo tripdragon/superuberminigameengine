@@ -1,5 +1,6 @@
 
 import {Vector3} from "modules/vector3.js";
+import {random3InRange} from "modules/mathness.js";
 import {Matrix4} from "modules/matrix4.js";
 import {CheapPool} from "utilites/cheapPool.js";
 import {Entities} from "modules/basicEntities.js";
@@ -266,6 +267,14 @@ export class Quark {
     
     
     
+  }
+  
+  // DONT RUN IN LOOP
+  randomPosition(min, max){
+    const aa = random3InRange(min,max);
+    this.position.x = aa[0];
+    this.position.z = aa[1];
+    this.position.y = aa[2];
   }
   
   
