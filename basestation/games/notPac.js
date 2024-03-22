@@ -83,6 +83,44 @@ export class NotPac extends Game{
     }
     
     
+    // test the materials are seperate, they are not right now
+    // 
+    // for (var i = 0; i < 122; i++) {
+    // 
+    //   const bb = new Plane({system:this.system, gl:this.gl, width:100,height:100, colorHex:0xffffff*Math.random()});
+    //   // bb.rotation.y = -0.2;
+    //   bb.scale.setScalar(randomInRange(0.05,0.1))
+    //   // bb.position.fromArray(random3InRange(-200,200));
+    //   let yy = this.system.gameWidth/8;
+    //   console.log(yy);
+    //   bb.position.x = randomInRange(-yy,yy);
+    //   bb.position.y = randomInRange(-yy,yy);
+    //   bb.position.z = randomInRange(-yy,yy);
+    // 
+    //   this.sceneGrapth.add(bb);
+    //   this.groupA.add(bb);
+    // 
+    //   bb.custom.mColor = bb.material.color.clone();
+    //   bb.custom.isFlipped = false;
+    //   bb.custom.crossfadeAlpha = 0;
+    //   bb.custom.colorA = new Color().setHex(0x6f5cff);
+    //   bb.custom.colorB = new Color().setHex(0xffef5c);
+    //   bb.custom.colorC = new Color().setHex(0xff5c64);
+    // 
+    //   bb.custom.basePos = null;
+    //   bb.custom.p0 = new Vector3();
+    //   bb.custom.p1 = new Vector3();
+    //   bb.custom.startingSpeedScalar = 0;
+    //   bb.custom.startingAlpha = 0;
+    //   bb.custom.yy = -1;
+    // 
+    //   // bb.loadImage("http://localhost:8001/sprites/NFT_gradprix_uponcat.png");
+    //   // bb.loadImage("./sprites/NFT_gradprix_uponcat.png");
+    //   bb.loadImage("./sprites/dog1.png");
+    // 
+    // }
+    // 
+    
     
     // debugger items
     for (var i = 0; i < 122; i++) {

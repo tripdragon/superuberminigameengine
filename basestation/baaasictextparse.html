@@ -228,7 +228,13 @@
         
         // startParse("10 birds flying around a dog");
         // debugger
-        startParse(magicspeel);
+        
+        let aa = magicspeel.split(".");
+        for (var i = 0; i < aa.length; i++) {
+          startParse(aa[i]);
+        }
+        
+        // startParse(magicspeel);
         // addPlane({colorHex:0x5c5cff})
       });
       
@@ -280,6 +286,17 @@ var urlNames = {
   birds : "./sprites/NFT_cash_oranges_bird.png",
   dog : "./sprites/dog1.png",
   
+}
+
+// references the global funtions ecs's
+var verbActions = {
+  // flying : fly(item.objects[i])
+  flying : function (item) {
+    fly(item)
+  },
+  spinning : function (item) {
+    spin(item)
+  },
 }
 
 
@@ -354,6 +371,7 @@ var mockFactories = {
       const yy = addPlane({colorHex:0x5c5cff})
       yy.setColorHex(0xffffff);
       if (item.url) {
+        console.log("item.url", item.url);
         yy.loadImage(item.url)
       }
       return yy;
@@ -373,14 +391,19 @@ var mockFactories = {
       return {data:null, finished:false}
     },
     // 
-    // cant put verb selector in here properly
+    
     build : function(item){
+      console.log("cant put verb selector in here properly");
       // mockFlying(item)
       // debugger
       if (item.objects) {
         for (var i = 0; i < item.objects.length; i++) {
           // spin(item.objects[i])
-          fly(item.objects[i])
+          if (this.verbActionName && verbActions[this.verbActionName]) {
+            verbActions[this.verbActionName](item.objects[i])  
+          }
+          
+          // fly(item.objects[i])
         }
       }
       console.log("this wont work right now cause its a complex object");
@@ -473,6 +496,20 @@ function startParse(phrase) {
   
   let dataArray = buildClassActionsJoinList(phrase)
   var queueA = new Queue();
+  // debugger
+  // this is a crappy patch
+  for (var i = 0; i < dataArray.length; i++) {
+    if(dataArray[i].type === "number"){
+      dataArray[i].action.count = +dataArray[i].word;
+    }
+    if(dataArray[i].type === "verb"){
+      // debugger
+      dataArray[i].action.verbActionName = dataArray[i].word;
+    }
+  }
+  // verbActions
+  // fly(item.objects[i])
+  
 
   const index = 0;
   const lim = dataArray.length;
