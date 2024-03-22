@@ -6,6 +6,13 @@ npx http-server -->
 
 https://tripdragon.github.io/superuberminigameengine/basestation
 
+
+In this demo, at the moment you can type a number, a subject (birds, or cats) and a verb (spinning, or flying)
+https://tripdragon.github.io/superuberminigameengine/basestation/baaasictextparse.html
+
+
+
+
 # superuberminigameengine
 
 A tiny game engine of delight
