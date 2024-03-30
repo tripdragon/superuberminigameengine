@@ -26,7 +26,6 @@ magicbox.addEventListener("send", (ev) => {
 
 
 
-
 // PASTED IN CODE HASTE WITH!!
 
 
@@ -125,6 +124,9 @@ class CheapPool extends Array {
 		if (index > -1) {
 			this.splice(index, 1);
 		}
+	}
+	getTopOfStack(){
+		
 	}
 }
 
@@ -360,12 +362,13 @@ function startParse(phrase) {
   // functions action list
   // Since actions are very unique in their own right per word
   // solving this looks to require a dynamic look up
+	// BUT we dont yet know modifier values for numbers and such
   
 	let dataArray = buildClassActionsJoinList(phrase)
-	var queueA = new Queue();
+	let queueA = new Queue();
 	
 	// this is a crappy patch
-	for (var i = 0; i < dataArray.length; i++) {
+	for (let i = 0; i < dataArray.length; i++) {
 		if (dataArray[i].type === "number") {
 			dataArray[i].action.count = +dataArray[i].word;
 		}
@@ -387,17 +390,61 @@ function startParse(phrase) {
 // :x
 
 
+function handle3DObjects(scene, resultData) {
+	// this is for adding object to the scene
+	
+	if (resultData.kind === "objectsArray") {
+		for (var ii = 0; ii < resultData.data.length; ii++) {
+			const pickedObject = resultData.data[ii];
+			scene.push(pickedObject)
+			pickedObject.randomPosition(-20, 20)
+			pickedObject.position.z = 0;
+		}
+	}
+	
+}
+
+
+// @selected : T dataArray[i]
+// @queue : T queue???
+// just churns on the data and works with the queues
+function currentWordTest_CM(selected, queue) {
+	if (selected.action.needs !== "") {
+		if (queue.stock.length > 0) {
+			
+			let picked = null;
+			
+			for (var ii = queue.stock.length - 1; ii >= 0; ii--) {
+				if (selected.action.needs === queue.stock[ii].type) {
+					picked = queue.stock[ii];
+					break;
+				}
+			}
+			
+			if (picked) {
+				let yy = selected.action.check(picked);
+				if (yy.finished) {
+					selected.finished = true;
+					if (yy.kind === "objectsArray") {
+						for (var rr = 0; rr < yy.data.length; rr++) {
+							scene.push(yy.data[rr])
+						}
+					}
+				}
+			}
+
+		}
+		
+		if (selected.finished == false) {
+			queue.addItem(selected);
+		}
+		
+	}
+}
 
 
 // words
-function recursiveFn({
-	lim,
-	index,
-	dataArray,
-	queue,
-	scene,
-	pool
-}) {
+function recursiveFn({ lim, index, dataArray, queue, scene, pool }) {
 	console.log("aaa", index);
 	if (index === lim) {
 		console.log("out 111");
@@ -406,59 +453,31 @@ function recursiveFn({
 
 
 	let selected = dataArray[index];
-	let holdSelected = null;
 
 	// we need to have control of the order and specials data
 	// shelving it away in queue with pointer logic is annoying
 
-	// previous words tests
+	// checking each previous word
+	// loop backwards for "previous in"
+	// since its looping, doing a getTop() wont work since we might skip it
+	// if its finished its tossed
 	for (var ii = queue.items.length - 1; ii >= 0; ii--) {
-		let aa = queue.items[ii];
-		let bb = aa.action.check(selected);
-		if (bb.finished) {
-			if (bb.kind === "objectsArray") {
-				for (var rr = 0; rr < bb.data.length; rr++) {
-					// debugger
-					scene.push(bb.data[rr])
-					bb.data[rr].randomPosition(-20, 20)
-					bb.data[rr].position.z = 0;
-				}
-			}
+		
+		// hiding the check here makes not knowing the stuff confusing
+		// check internal is what does data building like instances
+		// should be in here, its easy to NOT know wtf is going on otherwise
+		let resultData = queue.items[ii].action.check(selected);
+		
+		if (resultData.finished) {
 			queue.items.splice(ii, 1);
+			handle3DObjects(scene,resultData);
 		}
 
 	}
 
 
 	// current word test
-	if (selected.action.needs !== "") {
-		if (queue.stock.length > 0) {
-			let picked = null;
-			for (var ii = queue.stock.length - 1; ii >= 0; ii--) {
-				if (selected.action.needs === queue.stock[ii].type) {
-					picked = queue.stock[ii];
-					break;
-				}
-			}
-			if (picked) {
-				let yy = selected.action.check(picked);
-				// debugger
-				if (yy.finished) {
-					if (yy.kind === "objectsArray") {
-						for (var rr = 0; rr < yy.data.length; rr++) {
-							scene.push(yy.data[rr])
-							// debugger
-						}
-					}
-					selected.finished = true;
-				}
-			}
-
-		}
-		if (selected.finished == false) {
-			queue.addItem(selected);
-		}
-	}
+	currentWordTest_CM(selected, queue)
 
 	// singular noun self builds
 	// cant figure out
@@ -476,14 +495,7 @@ function recursiveFn({
 
 	// recurrrrrsion
 	index++;
-	recursiveFn({
-		lim: lim,
-		index: index,
-		dataArray: dataArray,
-		queue: queue,
-		scene: scene,
-		pool: pool
-	});
+	recursiveFn({ lim: lim, index: index, dataArray: dataArray, queue: queue, scene: scene, pool: pool });
 	console.log("bbbb", index);
 }
 
@@ -536,3 +548,16 @@ class Queue {
 	// }
 
 }
+
+
+
+
+
+setTimeout(function (x) {
+	console.log("¿??¿¿? tacos");
+	console.log("debugging automated ");
+	
+	clearGame()
+	startParse("10 cats flying")
+	
+}, 1000)
