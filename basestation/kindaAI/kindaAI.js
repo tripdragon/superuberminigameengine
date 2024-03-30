@@ -104,7 +104,7 @@ const parseStatementToActionObject = (statement) => {
 
   // We need to turn this into an action statement as JSON
   const splitStatement = statement.split(" ")
-    .filter((piece) => !ignoreWords.includes(piece));
+    // .filter((piece) => !ignoreWords.includes(piece));
 
   // WE CURRENTLY ONLY SUPPORT 1 ADJECTIVE PER SUBJECT, AND 1 PER PREPOSITION OBJECT, 2 TOTAL
   // Let's build on the rule for 1 adjective allowed each.
@@ -115,11 +115,12 @@ const parseStatementToActionObject = (statement) => {
   const actionObject = {
     subject: '', // First noun we encounter
     number: '', // First num we encounter
-    adjective: '', // Arr of adjectives encountered before a preposition
+    adjectives: [], // Arr of adjectives encountered before a preposition
     verb: '', // First verb we encounter
     preposition: '', // First preposition we encounter
     prepositionObj: '', // 2nd noun we encounter
-    prepositionObjAdjective: '', // Rest of the adjectives we encounter
+    prepositionObjAdjectives: [], // Rest of the adjectives we encounter
+    prepositionObjNumber: '',
     rest: [] // The remaining words
   };
 
@@ -131,8 +132,13 @@ const parseStatementToActionObject = (statement) => {
 
     // Check if it's a number first
     if (!isNaN(formattedWord)) {
+      if (actionObject.number !== '') {
+        actionObject.prepositionObjNumber = Number(formattedWord);
+      }
+      else {
+        actionObject.number = Number(formattedWord);
+      }
 
-      actionObject.number = Number(formattedWord);
       return;
     }
 
@@ -141,45 +147,54 @@ const parseStatementToActionObject = (statement) => {
       formattedWord = formattedWord.slice(0, -1);
     }
 
-    console.log('formattedWord', formattedWord);
-
     const wordObj = parsedDictionary[formattedWord];
 
     if (!wordObj) {
       console.warn('WARNING NO DICTIONARY MATCH for :', formattedWord);
+      actionObject.rest.push(formattedWord);
       return;
     }
 
-    const isNoun = hasTag(wordObj, "nouns");
-    const isAdjective = hasTag(wordObj, "adjective");
-    const isVerb = hasTag(wordObj, "verbs");
-    const isPreposition = hasTag(wordObj, "prepositions");
-
-    if (!actionObject.subject && isNoun) {
-      actionObject.subject = wordObj;
+    if (hasTag(wordObj, "nouns")) {
+      if (!actionObject.subject) {
+        actionObject.subject = wordObj;
+      }
+      else {
+        actionObject.prepositionObj = wordObj;
+      }
     }
-    else if (isNoun) {
-      actionObject.prepositionObj = wordObj;
+    else if (hasTag(wordObj, "adjectives")) {
+      if (actionObject.preposition) {
+        actionObject.prepositionObjAdjectives.push(wordObj);
+      }
+      else {
+        actionObject.adjectives.push(wordObj);
+      }
     }
-    else if (isAdjective) {
-      actionObject.adjectives.push(wordObj);
-    }
-    else if (isVerb) {
+    else if (hasTag(wordObj, "verbs")) {
       actionObject.verb = wordObj;
     }
-    else if (isPreposition) {
+    else if (hasTag(wordObj, "prepositions")) {
       actionObject.preposition = wordObj;
+    }
+    else {
+      actionObject.rest.push(wordObj);
     }
   }, {});
 
   console.log("splitStatement", splitStatement);
-  console.log("actionObject AFTER", actionObject);
+
+  return actionObject;
 };
 
 // parseStatement("10 cats fly around a dog");
-parseStatementToActionObject("3 dogs flutter under a tree");
+const actionObject = parseStatementToActionObject("3 small dogs flutter under 2 big trees dude");
+
+console.log('actionObject', actionObject);
 
 // We're looking to build an object to parse the sentence into.
-//
 
-// export {parseStatementToActionObject, hasTag, ignoreWords, parsedDictionary, prepositions, isKindaPural, isNoun, isNumber, dictionary}
+window.addPlane({
+  colorHex: 0x5c5cff
+});
+
