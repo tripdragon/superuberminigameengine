@@ -1,7 +1,15 @@
 
+
+// Data is broken up as tables for 
+// Word Dictionares, image urls, and modifier functions
+// Word, url, verb, etc...
+// Since we would like to keep data seperate and themeable
+// we merge what we need later on
+
+
 // this would be populated from external database
 // word has primitive type
-var mockDictionary = {
+var dictionary = {
 	"number": { "type": "determiner" },
 	"bird": { "type": "noun"},
 	"birds": { "type": "noun"},
@@ -99,15 +107,15 @@ class Queue {
 // around( fly(buildA(bird, 4, birds)), buildA(dog, 2, dogs) )
 
 
-function buildArrayOfObjects(objectFunc, count = 0) {
-	const yy = [];
-	count = Math.max(0, count); // no negative counts
-	for (var i = 0; i < count; i++) {
-		yy.push(objectFunc())
-	};
-	console.log("build array");
-	return yy;
-}
+// function buildArrayOfObjects(objectFunc, count = 0) {
+// 	const yy = [];
+// 	count = Math.max(0, count); // no negative counts
+// 	for (var i = 0; i < count; i++) {
+// 		yy.push(objectFunc())
+// 	};
+// 	console.log("build array");
+// 	return yy;
+// }
 
 
 class ConceptWord {
@@ -145,12 +153,15 @@ class CheapPool extends Array {
 			this.splice(index, 1);
 		}
 	}
-	getTopOfStack(){
-		
-	}
+	getTopOfStack(){}
 }
 
-const mockFactories = {
+
+const factories = {
+	// Builds the data and functions for the types of words
+	// each is returning a new instance so as to allow unique values
+	// instead of buggy references
+	
 	number : function(props) {
 		return new ConceptWord({
 			// type:props.type, word:props.word,
@@ -274,11 +285,12 @@ function buildClassActionsJoinList(phrase) {
 	let yy = [];
 	for (var i = 0; i < wordsA.length; i++) {
 		const word = wordsA[i];
-		// number is special since its unsigned infinite
+		// number is special since its unsigned infinite as negative would be pointless
 		if (isNumber(word)) {
-			yy.push( mockFactories["number"]({type:"number", word:word}) );
-		} else if (mockDictionary[word] && mockFactories[mockDictionary[word].type]) {
-			yy.push( mockFactories[mockDictionary[word].type]({type:mockDictionary[word].type, word:word, url:urlTable[word]}) );
+			yy.push( factories["number"]({type:"number", word:word}) );
+		} 
+		else if (dictionary[word] && factories[dictionary[word].type]) {
+			yy.push( factories[dictionary[word].type]({type:dictionary[word].type, word:word, url:urlTable[word]}) );
 		}
 	}
 	
@@ -300,21 +312,21 @@ function buildClassActionsJoinList(phrase) {
 // 
 // :o Start
 
-// ideally we should beable to produce an EDL
-// from the phrase and run that against a functions list
-// both for asset testing and easy to compose complexities
-//  but that makes it strict and fiddly
 function startParse(phrase) {
+	// ideally we should be able to produce an EDL
+	// from the phrase and run that against a functions list
+	// both for asset testing and easy to compose complexities
+	// but that makes it strict and fiddly
 
-	let scene = [];
 
+	const dataArray = buildClassActionsJoinList(phrase);
   // at this point we should be merging the dictionary selected list to the
   // functions action list
   // Since actions are very unique in their own right per word
   // solving this looks to require a dynamic look up
 	// BUT we dont yet know modifier values for numbers and such
   
-	const dataArray = buildClassActionsJoinList(phrase);
+	let scene = [];
 
 	recursiveFn({ lim: dataArray.length, 
 		index: 0, 
@@ -330,6 +342,8 @@ function startParse(phrase) {
 
 function handle3DObjects(scene, resultData) {
 	// this is for adding object to the scene
+	// well global addPlane() auto does that right already
+	// so instead we just futz with position for now
 	
 	if (resultData.kind === "objectsArray") {
 		for (var ii = 0; ii < resultData.data.length; ii++) {

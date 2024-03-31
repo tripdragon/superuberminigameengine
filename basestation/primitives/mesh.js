@@ -48,6 +48,8 @@ export class Mesh extends Quark{
   // vertex array object
   vao = null;
   
+  textureCoordinates = [ 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1 ];
+  
   constructor(props){
     // debugger
     super({...props});
@@ -192,9 +194,10 @@ export class Mesh extends Quark{
       this.textureCoordBuffer = gl.createBuffer();
       
       gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordBuffer);
-      const textureCoordinates = [ 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1 ];
+      // const textureCoordinates = [ 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1 ];
+      // this.textureCoordinates = [ 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1 ];
       
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW );
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoordinates), gl.STATIC_DRAW );
 
       
       gl.enableVertexAttribArray(this.material.programInfo.attribLocations.texture);
@@ -274,31 +277,28 @@ export class Mesh extends Quark{
       if ( this.colorGLNeedsUpdate ) {
         this.colorGLNeedsUpdate = false;
         
-        // 
         // this.setColorHex(0x000000)
         
         gl.enableVertexAttribArray(this.material.programInfo.attribLocations.color);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.colorsBuffer);
-        const numComponents = 3;
-        const type = gl.FLOAT; // the data in the buffer is 32bit floats
-        // const type = gl.UNSIGNED_BYTE;  // the data is 8bit unsigned values
-        // const normalize = true;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
         
-        gl.vertexAttribPointer(
-          this.material.programInfo.attribLocations.color,
-          numComponents,
-          type,
-          normalize,
-          stride,
-          offset
-        );
+         // the data in the buffer is 32bit floats
+        // color, numComponents, type, normalize, stride, offset
+        gl.vertexAttribPointer( this.material.programInfo.attribLocations.color, 3, gl.FLOAT, true, 0, 0 );
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
         
       }
       
+    }
+    
+    { // texture has to alway update cause two meshes need to over render each
+      
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordBuffer);
+      gl.enableVertexAttribArray(this.material.programInfo.attribLocations.texture);
+      gl.vertexAttribPointer(this.material.programInfo.attribLocations.texture, 2, gl.FLOAT, true, 0, 0);
+      // gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
+
     }
     
     // {
