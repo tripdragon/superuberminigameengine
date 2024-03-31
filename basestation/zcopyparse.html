@@ -3,6 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <title>meep meep</title>
+
+    <!--
+
+  this is a CRUDE rushed build of natural lang simple grammar parcing
+
+   -->
     <!-- <script src="mission1.js" type="module" defer></script> -->
     <!--
     python3 -m http.server 8001
@@ -103,23 +109,9 @@
 
       import { NotPac } from  "./games/notPac.js";
 
-
-                // import { OnScreenLogger } from "./Plugins/OnScreenLogger.js";
-                // its in the other script tag
-                // onConsole = new OnScreenLogger();
-
-
-
-      // for now we need a starter empty game cause swaping discs
-      // via url is not fully clearing the starting game
-      // _o.insertDisc(starter);
-
       _b.insertDisc({game:NotPac});
 
       window.currentPlane = null;
-
-      // expose some core use functions
-
 
       /*
       clearGame()
@@ -141,6 +133,7 @@
         _m.baseStation.currentGame.sceneGrapth.reset();
       }
 
+
       window.addPlane = function({width=10, height=10, colorHex=0x0044a3}={}){
         window.currentPlane = _m.baseStation.quickAccess.addPlane({width:width,height:height, colorHex:colorHex});
         return window.currentPlane;
@@ -152,6 +145,9 @@
       window.spin = function(item){
         return _m.baseStation.quickAccess.spin(item);
       }
+      window.fly = function(item){
+        return _m.baseStation.quickAccess.fly(item);
+      }
 
       window.mockin = function(phrase){
         const aa = phrase.split(" ");
@@ -161,67 +157,66 @@
           // x.setColorHex(0xffffff)
         })
       }
+
+
+
+
+
+
     </script>
 
     <script>
-      console.log("lil gui TEMP!!");
-      var GUI = lil.GUI;
-      const gui = new GUI();
-      const __dats = {
-        x : 0,
-        y : 0,
-        z : 148, // backing up in +z it seems
-        rz : 0,
-        ry : 1.33831847042925,
-        fov : 129,
-        near : 1,
-        far : 2000,
-        x2 : 1,
-        s2 : 1,
-        r2x : 0,
-        r2y : 0,
-        r2z : 0,
-        speed : 1,
-        radius : 12,
-        theta : 0
-      }
-      gui.add( __dats, 'x', -400, 400 );
-      gui.add( __dats, 'y', -400, 400 );
-      gui.add( __dats, 'z', -1000, 1000 );
-      // gui.add( __dats, 'rz', 0, Math.PI*2 );
-      gui.add( __dats, 'ry', 0, Math.PI*2 );
-      // gui.add( __dats, 'fov', 0, Math.PI*2 );
-      gui.add( __dats, 'fov', 0, 360 );
-      gui.add( __dats, 'speed', 0, 4 );
-      gui.add( __dats, 'radius', 0, 800 );
-      gui.add( __dats, 'theta', 0, Math.PI*4 );
+    console.log("lil gui TEMP!!");
+    var GUI = lil.GUI;
+    const gui = new GUI();
+    const __dats = {
+      x : 0,
+      y : 0,
+      z : 148, // backing up in +z it seems
+      rz : 0,
+      ry : 1.33831847042925,
+      fov : 129,
+      near : 1,
+      far : 2000,
+      x2 : 1,
+      s2 : 1,
+      r2x : 0,
+      r2y : 0,
+      r2z : 0,
+      speed : 0.1,
+      radius : 12,
+      theta : 0
+    }
+    gui.add( __dats, 'x', -400, 400 );
+    gui.add( __dats, 'y', -400, 400 );
+    gui.add( __dats, 'z', -1000, 1000 );
+    // gui.add( __dats, 'rz', 0, Math.PI*2 );
+    gui.add( __dats, 'ry', 0, Math.PI*2 );
+    // gui.add( __dats, 'fov', 0, Math.PI*2 );
+    gui.add( __dats, 'fov', 0, 360 );
+    gui.add( __dats, 'speed', 0, 4 );
+    gui.add( __dats, 'radius', 0, 800 );
+    gui.add( __dats, 'theta', 0, Math.PI*4 );
 
-      // gui.add( __dats, 'near', 0, 200 );
-      // gui.add( __dats, 'far', 0, 2000 );
-      // gui.add( __dats, 'x2', 0, 400 );
-      // gui.add( __dats, 's2', 0.0001, 4 );
-      // gui.add( __dats, 'r2x', 0, Math.PI*4 );
-      // gui.add( __dats, 'r2y', 0, Math.PI*4 );
-      // gui.add( __dats, 'r2z', 0, Math.PI*4 );
+    // gui.add( __dats, 'near', 0, 200 );
+    // gui.add( __dats, 'far', 0, 2000 );
+    // gui.add( __dats, 'x2', 0, 400 );
+    // gui.add( __dats, 's2', 0.0001, 4 );
+    // gui.add( __dats, 'r2x', 0, Math.PI*4 );
+    // gui.add( __dats, 'r2y', 0, Math.PI*4 );
+    // gui.add( __dats, 'r2z', 0, Math.PI*4 );
 
     </script>
+
 
     <!-- handle tools space -->
-    <script type="text/javascript">
 
-      const magicbox = document.getElementById("magicbox");
-      magicbox.addEventListener("send",(ev)=>{
-        console.log("have : ", ev.detail);
-        const magicspeel = ev.detail;
-        if (magicspeel === "neat!") {
-          clearGame()
-          spin( addManyPlanes({span:20,width:2,height:2,count:100,colorHex:"random"}) )
-        }
-        else if(magicspeel !== ""){
-          eval(magicspeel);
-        }
-      });
+    <!-- fake text parse 111 -->
+    <!-- <script type="text/javascript" src="./kindaAI/try2.js"></script> -->
 
-    </script>
+    <!-- Bububbubblblbllbllblellellelee -->
+    <script src="./kindaAI/utils.js"></script>
+    <script src="./kindaAI/dictionary.js"></script>
+    <script src="./kindaAI/kindaAI.js"></script>
   </body>
 </html>
