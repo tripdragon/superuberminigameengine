@@ -30,6 +30,7 @@ var urlTable = {
 	birds: "./sprites/NFT_cash_oranges_bird.png",
 	birds: "./sprites/NFT_cash_oranges_bird.png",
 	dog: "./sprites/dog1.png",
+	dogs: "./sprites/dog1.png",
 }
 
 
@@ -50,6 +51,10 @@ function isNumber(strWord) {
 	return true;
 }
 
+
+function mockAdverb(item){
+	item.adverb = "adverb neat!";
+}
 
 
 class Queue {
@@ -121,6 +126,8 @@ class Queue {
 class ConceptWord {
 	needs = ""; // change this to an array later, also maybe rename to accepts
 	finished = false;
+	data = null;
+	dataKind = "";
 	constructor({ word = "", type = "", needs = "", count = 0, check, build, url = "" } = {}) {
 		// debugger
 		this.needs = needs;
@@ -170,23 +177,36 @@ const factories = {
 			needs: "noun",
 			check: function(item) {
 				if (item.type === this.needs) {
-					let yy = this.build(item);
+					// let yy = this.build(item);
+					this.data = this.build(item);
 					this.finished = true;
-					return { data: yy, finished: true, kind: "objectsArray" }
+					this.dataKind = "objectsArray";
+					// return { data: yy, finished: true, kind: "objectsArray" }
+					return this;
 				}
 				this.finished = false;
-				return { data: null, finished: false }
+				this.data = null;
+				return this;
+				// return { data: null, finished: false }
 			},
 			build: function(item) {
 				let yy = [];
-				for (var i = 0; i < this.count; i++) {
-
-					// yy.push(item.action.build(item))
-					yy.push(item.build(item))
-					item.objects = yy; // hard assign of 3d objects for now
+				// we reuse the original first
+				if(item.type === "noun" && Array.isArray(item.data) ){
+					yy.push(item.data[0]);
+					// then sub 1 from the count
+					for (var i = 1; i < this.count; i++) {
+						// yy.push(item.action.build(item))
+						// yy.push(item.build(item))
+						yy.push(item.build())
+						// item.objects = yy; // hard assign of 3d objects for now
+					}
+					// mutates the thing????
+					// hmmmm
+					item.data = yy;
+					return item.data;
 				}
-
-				return yy;
+				return [];
 			}
 		})
 	},
@@ -196,20 +216,19 @@ const factories = {
 			// type:props.type, word:props.word, url:props.url,
 			...props,
 			// noun needs to other words to do anything, but delay build
-			check: function(item) {
-				return {
-					data: null,
-					finished: true
-				}
+			check: function() {
+				this.finished = true;
+				this.data = [this.build()]; // force an array, so number can pick from it
+				return this;
 			},
-			build: function(item) {
+			build: function() {
 				const yy = addPlane({
 					colorHex: 0x5c5cff
 				})
 				yy.setColorHex(0xffffff);
-				if (item.url) {
-					console.log("item.url", item.url);
-					yy.loadImage(item.url)
+				if (this.url) {
+					console.log("this.url", this.url);
+					yy.loadImage(this.url)
 				}
 				return yy;
 			}
@@ -226,17 +245,22 @@ const factories = {
 				// like : item.type === "noun"
 				if (item.type === this.needs) {
 					this.build(item)
-					return { data: item, finished: true }
+					this.data = item;
+					this.finished = true;
+					return this;
 				}
-				return { data: null, finished: false }
+				this.data = null;
+				this.finished = false;
+				return this;
 			},
 
 			build: function(item) {
 				console.log("cant put verb selector in here properly");
-				if (item.objects) {
-					for (var i = 0; i < item.objects.length; i++) {
+				// if (item.objects) {
+				if (item.dataKind = "objectsArray" && Array.isArray(item.data) ) {
+					for (var i = 0; i < item.data.length; i++) {
 						// spin(item.objects[i])
-						this.modifier(item.objects[i]);
+						this.modifier(item.data[i]);
 					}
 				}
 			}
@@ -251,15 +275,18 @@ const factories = {
 			check: function(item) {
 				if (item.type === this.needs) {
 					this.build(item)
-					return {
-						data: item,
-						finished: true
-					}
+					this.data = item;
+					this.finished = true;
+					// return { data: item, finished: true }
+					return this;
 				}
-				return {
-					data: null,
-					finished: false
-				}
+				this.data = null;
+				this.finished = false;
+				return this;
+				// return {
+				// 	data: null,
+				// 	finished: false
+				// }
 			},
 			
 			build: function(item) {
@@ -290,6 +317,8 @@ function buildClassActionsJoinList(phrase) {
 			yy.push( factories["number"]({type:"number", word:word}) );
 		} 
 		else if (dictionary[word] && factories[dictionary[word].type]) {
+			// >>> 23848
+			// debugger
 			yy.push( factories[dictionary[word].type]({type:dictionary[word].type, word:word, url:urlTable[word]}) );
 		}
 	}
@@ -345,7 +374,7 @@ function handle3DObjects(scene, resultData) {
 	// well global addPlane() auto does that right already
 	// so instead we just futz with position for now
 	
-	if (resultData.kind === "objectsArray") {
+	if (resultData.dataKind === "objectsArray") {
 		for (var ii = 0; ii < resultData.data.length; ii++) {
 			const pickedObject = resultData.data[ii];
 			scene.push(pickedObject)
@@ -360,8 +389,17 @@ function handle3DObjects(scene, resultData) {
 // @selected : T dataArray[i]
 // @queue : T queue???
 // just churns on the data and works with the queues
-function currentWordTest_CM(selected, queue) {
-	if (selected.needs !== "") {
+function currentWordTest_CM(selected, queue, scene) {
+	// nouns dont need anything, so we just build them first
+	// which gives a single .data array [object]
+	if(selected.type === "noun"){
+		let yy = selected.check();
+		(yy.finished) && (yy.dataKind === "objectsArray") && yy.data.forEach( item => scene.push(item) );
+		if (yy.finished == false) {
+			queue.addItem(selected);
+		}
+	}
+	else if (selected.needs !== "") {
 		if (queue.stock.length > 0) {
 			
 			let picked = null;
@@ -375,7 +413,7 @@ function currentWordTest_CM(selected, queue) {
 			
 			if (picked) {
 				let yy = selected.check(picked);
-				(yy.finished) && (yy.kind === "objectsArray") && yy.data.forEach( item => scene.push(item) );
+				(yy.finished) && (yy.dataKind === "objectsArray") && yy.data.forEach( item => scene.push(item) );
 			}
 
 		}
@@ -407,27 +445,31 @@ function recursiveFn({ lim, index, dataArray, queue, scene, pool }) {
 	// since its looping, doing a getTop() wont work since we might skip it
 	// if its finished its tossed
 	
+
+	currentWordTest_CM(selected, queue, scene)
+
+	
 	for (var ii = queue.items.length - 1; ii >= 0; ii--) {
 		// console.log("¿^^?");
 		// hiding the check here makes not knowing the stuff confusing
 		// check internal is what does data building like instances
 		// should be in here, its easy to NOT know wtf is going on otherwise
 		let resultData = queue.items[ii].check(selected);
-		
-		
+	
+		// debugger
 		// console.log(resultData);
-		
+	
 		if (resultData.finished) {
 			console.log("¿¿¿ FFF ????");
 			queue.items.splice(ii, 1);
 			handle3DObjects(scene,resultData);
 		}
-
+	
 	}
 
 
 	// current word test
-	currentWordTest_CM(selected, queue)
+	// currentWordTest_CM(selected, queue, scene)
 
 	// singular noun self builds
 	// cant figure out
@@ -491,6 +533,8 @@ setTimeout(function (x) {
 	
 	clearGame()
 	// startParse("10 cats flying")
-	startParse("20 birds spinning")
+	// startParse("20 birds spinning")
+	startParse("3 birds spinning 2 dogs spinning")
+	magicbox.value = "3 birds spinning 2 dogs spinning";
 	
 }, 1000)

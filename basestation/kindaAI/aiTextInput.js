@@ -39,6 +39,11 @@ class AITextInput extends HTMLElement {
     
   }
   
+  set value(val){
+    const magicbox = document.querySelector("ai-textinput").shadowRoot.getElementById("magicbox");
+    magicbox.value = val;
+  }
+  
   connectedCallback(){
     
     const button = document.querySelector("ai-textinput").shadowRoot.getElementById("gobutton");
