@@ -300,36 +300,7 @@ export class Mesh extends Quark{
       gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
     }
-    
-    // {
-    //   // >>>>
-    // 
-    //   gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordBuffer);
-    //   const textureCoordinates = [ 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1 ];
-    // 
-    //   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates), gl.STATIC_DRAW );
-    // 
-    // 
-    //   gl.enableVertexAttribArray(this.material.programInfo.attribLocations.texture);
-    // 
-    // 
-    //   // Tell the attribute how to get data out of texcoordBuffer (ARRAY_BUFFER)
-    //   const size = 2;          // 2 components per iteration
-    //   const type = gl.FLOAT;   // the data is 32bit floating point values
-    //   const normalize = true;  // convert from 0-255 to 0.0-1.0
-    //   const stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next texcoord
-    //   const offset = 0;        // start at the beginning of the buffer
-    //   gl.vertexAttribPointer(this.material.programInfo.attribLocations.texture, size, type, normalize, stride, offset);
-    // 
-    //   gl.bindTexture(gl.TEXTURE_2D, this.texture);
-    // 
-    //   // Fill the texture with a 1x1 blue pixel.
-    //   // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 255, 255]));
-    //   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 255, 255, 255]));
-    // 
-    // 
-    // }
-    
+  
     // computing matrix for drawing
     this.gl.uniformMatrix4fv(this.material.programInfo.uniformLocations.modelMatrix, false, this.workMatrix.multiplyMatrices( cameraMatrix, this.worldMatrix).elements);
 
