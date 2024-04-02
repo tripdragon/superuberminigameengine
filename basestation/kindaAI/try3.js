@@ -1,4 +1,5 @@
-
+// this works, but we went for a whole new formula so moving 
+// over to try4 !!
 
 // Data is broken up as tables for 
 // Word Dictionares, image urls, and modifier functions

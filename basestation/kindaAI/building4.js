@@ -118,7 +118,8 @@ function process(index) {
   
   if (current.selfInstance) {
     instrs.add(`build : ${current.type} : ${current.word}`)
-		if( !current.needs ) current.finished = true;	
+		buildThing(current);
+		if( !current.needs ) current.finished = true;
   }
 	
 	if(current.needs){
@@ -154,7 +155,8 @@ function process(index) {
 				if(good){
 					current.incrNeedsIndex();
 					current.modified[sp.word] = sp;
-					instrs.add(`stack item match : ${current.type} : ${current.word} + ${sp.type} : ${sp.word}`)
+					composeThing(current, sp)
+					instrs.add(`stack item match build : ${current.type} : ${current.word} + ${sp.type} : ${sp.word}`)
 				}
 				else {
 					// instrs.add(`que add : ${current.type} : ${current.word} looking for ${current.needs}`)
@@ -178,7 +180,8 @@ function process(index) {
       if( qp.needs === current.type ){
         qp.incrNeedsIndex();
 				qp.modified[current.word] = current;
-        instrs.add(`que item match : ${qp.type} : ${qp.word} + ${current.type} : ${current.word}`)
+				composeThing(qp, current)
+        instrs.add(`que item match build : ${qp.type} : ${qp.word} + ${current.type} : ${current.word}`)
         if( !qp.finished ){
 					if (que.hasItem(qp)) {
 						instrs.add(`que item already in : ${qp.type} : ${qp.word}`)
@@ -208,8 +211,35 @@ function process(index) {
 
 
 
+class Animal{
+	isAnimal = true;
+	constructor(type){
+		this.type = type;
+		console.log(`type : im ${this.type}`);
+	}
+}
+
+function buildThing(item) {
+	console.log(`buildn thing: ${item.word}`);
+	if (item.type === "noun") {
+		let yy = new Animal(item.word)
+	}
+}
+
+function composeThing(itemA, itemB) {
+	console.log(`composing thing A: ${itemA.word} * B: ${itemB.word}`);
+	
+}
+
+
+// Class DataThing{
+// 
+// }
+
 // process(0)
 // instrs
+
+console.log("++++++++++");
 
 instrs = new CheapPool()
 for (var i = 0; i < data2.length; i++) {
