@@ -1,7 +1,106 @@
 
 // node kindaAI.js
 
-window.parseStatementToActionObject = (statement) => {
+// only checks for "s" right now, so "walrus" would be false
+// "i" or "es" fishes wont work, wellll fishes would....
+function isKindaPural(word) {
+  let bb = word.toLowerCase().substr(-1);
+  if (bb === "s") return true;
+  return false;
+}
+
+// NOTE must be the string version of the word
+function isNumber(strWord) {
+  if(isNaN(strWord)) return false;
+  return true;
+}
+
+// NOTE should be the dictionary version of the word
+const hasTag = (item, tag) => item?.tags.includes(tag);
+
+const ignoreWords = ["a", "the", "now"];
+
+// Research for later on taxonomy stuffs
+// If we have a polymorphic word we can use tags to differentiate how to use it
+var dictionary = {
+  "nouns" : {
+    "cat": { tags: [] },
+    "dog": { tags: [] },
+    "whale": { tags: [] },
+    "fish": { tags: [] },
+    "giraffe": { tags: [] },
+    "tree": { tags: [] }
+  },
+
+  "verbs" : {
+    "fly": { tags: ["action"] },
+    "blast": { tags: ["action"] },
+    "flutter": { tags: ["action"] },
+    "rotate": { tags: ["action"] },
+    "spin": { tags: ["action"] },
+  },
+
+  "adjectives" : {
+    "big": { tags: ["modifier"] },
+    "small": { tags: ["modifier"] }
+  },
+
+  "prepositions": {
+    "above": {},
+    "below": {},
+    "beside": {},
+    "between": {},
+    "in": {},
+    "inside": {},
+    "into": {},
+    "near": {},
+    "on": {},
+    "over": {},
+    "through": {},
+    "under": {},
+    "underneath": {},
+    "against": {},
+    "alongside": {},
+    "around": {},
+    "behind": {},
+    "beyond": {},
+    "by": {},
+    "onto": {},
+    "off": {},
+    "out": {},
+    "up": {},
+    "down": {},
+    "across": {}
+  }
+};
+
+// foreach and for each
+
+// a = "10 cats fly around a dog."
+
+// console.log('b', b);
+
+const parsedDictionary = Object.entries(dictionary).reduce((newDict, [category, items]) => {
+
+  return {
+    ...newDict,
+    ...(Object.entries(items).reduce((collector, [itemName, itemVal]) => {
+
+      return {
+        ...collector,
+        [itemName]: {
+          ...itemVal,
+          name: itemName, // Here for convenience
+          tags: [...itemVal.tags || [], category]
+        }
+      };
+    }, {}))
+  };
+}, {});
+
+console.log("parsedDictionary", parsedDictionary);
+
+const parseStatementToActionObject = (statement) => {
 
   // We need to turn this into an action statement as JSON
   const splitStatement = statement.split(" ")
@@ -89,29 +188,8 @@ window.parseStatementToActionObject = (statement) => {
 };
 
 // parseStatement("10 cats fly around a dog");
+const actionObject = parseStatementToActionObject("3 small dogs flutter under 2 big trees dude");
+
+console.log('actionObject', actionObject);
 
 // We're looking to build an object to parse the sentence into.
-
-setTimeout(function (x) {
-	console.log("¿??¿¿? tacos");
-	console.log("debugging automated ");
-
-  clearGame();
-
-  const actionObject = parseStatementToActionObject(
-    "3 small dogs flutter under 2 big trees dude"
-  );
-
-  // actionObject
-
-  addPlane({
-    colorHex: 0x5c5cff
-  });
-
-	// clearGame()
-	// startParse("10 cats flying")
-
-}, 1000);
-
-
-// Register window funcs

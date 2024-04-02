@@ -167,8 +167,6 @@
     
     <script>
     console.log("lil gui TEMP!!");
-    var GUI = lil.GUI;
-    const gui = new GUI();
     const __dats = {
       x : 0,
       y : 0,
@@ -187,32 +185,40 @@
       radius : 12,
       theta : 0
     }
-    gui.add( __dats, 'x', -400, 400 );
-    gui.add( __dats, 'y', -400, 400 );
-    gui.add( __dats, 'z', -1000, 1000 );
-    // gui.add( __dats, 'rz', 0, Math.PI*2 );
-    gui.add( __dats, 'ry', 0, Math.PI*2 );
-    // gui.add( __dats, 'fov', 0, Math.PI*2 );
-    gui.add( __dats, 'fov', 0, 360 );
-    gui.add( __dats, 'speed', 0, 4 );
-    gui.add( __dats, 'radius', 0, 800 );
-    gui.add( __dats, 'theta', 0, Math.PI*4 );
     
-    // gui.add( __dats, 'near', 0, 200 );
-    // gui.add( __dats, 'far', 0, 2000 );
-    // gui.add( __dats, 'x2', 0, 400 );
-    // gui.add( __dats, 's2', 0.0001, 4 );
-    // gui.add( __dats, 'r2x', 0, Math.PI*4 );
-    // gui.add( __dats, 'r2y', 0, Math.PI*4 );
-    // gui.add( __dats, 'r2z', 0, Math.PI*4 );
-
+    // debugger
+    if(lil) {
+      
+      
+      var GUI = lil.GUI;
+      const gui = new GUI();
+      
+      gui.add( __dats, 'x', -400, 400 );
+      gui.add( __dats, 'y', -400, 400 );
+      gui.add( __dats, 'z', -1000, 1000 );
+      // gui.add( __dats, 'rz', 0, Math.PI*2 );
+      gui.add( __dats, 'ry', 0, Math.PI*2 );
+      // gui.add( __dats, 'fov', 0, Math.PI*2 );
+      gui.add( __dats, 'fov', 0, 360 );
+      gui.add( __dats, 'speed', 0, 4 );
+      gui.add( __dats, 'radius', 0, 800 );
+      gui.add( __dats, 'theta', 0, Math.PI*4 );
+      
+      // gui.add( __dats, 'near', 0, 200 );
+      // gui.add( __dats, 'far', 0, 2000 );
+      // gui.add( __dats, 'x2', 0, 400 );
+      // gui.add( __dats, 's2', 0.0001, 4 );
+      // gui.add( __dats, 'r2x', 0, Math.PI*4 );
+      // gui.add( __dats, 'r2y', 0, Math.PI*4 );
+      // gui.add( __dats, 'r2z', 0, Math.PI*4 );
+    }
     </script>
     
     
     <!-- handle tools space -->
     
     <!-- fake text parse 111 -->
-    <script type="text/javascript" src="./kindaAI/try2.js"></script>
+    <script type="text/javascript" src="./kindaAI/try3.js"></script>
     
     
     

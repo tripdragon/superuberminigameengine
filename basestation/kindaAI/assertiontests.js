@@ -167,7 +167,7 @@ verb modifies bb[] flying( bb )
 walk for next routine
 adverb modifies previous verb, waits for noun
 determiner, does nothing but waits for noun, since its "a" its ignored, if it were number would modify next noun
-object found, refences previous determiner, references previous adverb thats waiting
+object found, references previous determiner, references previous adverb thats waiting
 
 
 in pairs:

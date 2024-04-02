@@ -1,0 +1,107 @@
+_m.baseStation.currentGame.sceneGrapth.objects.length
+
+_m.baseStation.currentGame.sceneGrapth.objects[5].position.y = 29
+
+
+heres a basis idea of what an instructional stack would look like without the logics back and forth
+
+
+
+10 birds flying around a dog
+
+10 -> nothing
+birds -> build single array [object]
+10 -> raise array of birds to 10 - birds.length adds to array [birds]
+flying -> each birds add flying attribute
+around -> apply attribute to flying, target -> nil
+a -> nothing
+dog -> build single array [object]
+a -> nil, denotes 1 so dog remains 1
+around -> assigns target from dog
+
+
+this would be the instructions that we can both generate and write. That would be unit testable
+HOW it references the needed word(s) before it is up to whutevr logics we make
+right now the recursion system just churns without the better instructions here (edited) 
+
+if you think about each line as a new address in hex
+
+0x0a = 10 -> nothing
+0x0b = birds -> build single array [object]
+0x0c = 10(0x0a) -> raise array of birds(0x0b) to 10 - birds.length adds to array [birds]
+0x0d = flying -> each birds(0x0c) add flying attribute
+0x0e = around -> apply attribute to flying(0x0d), target -> nil
+0x0f = a -> nothing
+0x0g = dog -> build single array [object]
+- a -> nil, denotes 1 so dog remains 1
+0x01 = around(0x0e) -> assigns target from dog(0x0g)
+
+
+
+queue order
+1:
+  10, nothing, check queue, nothing, place 10 in que, place in cache
+2:
+  birds, either:
+    instance a bird to array
+    check queue
+      check pairs of "number" needs "noun", produce array of 9 more [birds] as 10 - 1
+      remove from queue
+    place birds in cache
+  OR:
+    check que
+      check pairs of "number" needs "noun", produce array of 10 [birds]
+      assign finished to birds
+    ignore birds check and build phase
+    place birds in cache
+3:
+  flying:
+    check que, nothing
+    check cache find noun birds
+    apply flying to [birds] array
+  etc
+4:
+  around:
+    no que, check cache for verb, apply to verb, around also has a target need, it cant be the applied to
+    so we need to wait for a different noun, place in que
+5:
+  a: skip
+6:
+  dog: check que, no number, instance [dog]
+  check queue, assign dog to around target
+
+
+Of note, oldest out should be logic, as youlll get funny behaviour otherwise
+and dont splice, cause that would remove those in queue before we setteled them
+
+
+what is the data?
+arrays
+arrays that take data
+nested data
+
+
+
+
+10 dogs flying : ok
+
+10 flying dogs : 0k
+
+dogs 10 flying : eh
+
+dogs flying 10 : no
+
+flying 10 dogs : eh
+
+flying dogs 10 : eh
+
+[ 10 dogs ] * flying
+[10 flying] * [dogs]
+[dogs 10] * flying
+[dogs * flying].length = 1 * 10
+[flying * 10] * dogs
+[flying * dogs].length = 1 * 10
+
+
+
++++++
