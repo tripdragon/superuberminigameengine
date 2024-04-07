@@ -188,13 +188,21 @@ function buildClassActionsJoinList(phrase) {
 // only does flying care reference about its noun
 // so its still looking for a noun but we check the verbs noun, seeeeeems right
 // need a traverse then.....
-function process({index, que, stack, data, instrs, buildThing, composeThing}) {
+function process({context, index, que, stack, data, instrs, buildThing, composeThing}) {
   let current = data[index];
 	// debugger
   if (current.selfInstance) {
     instrs.add(`build : ${current.type} : ${current.word}`)
-		buildThing(current);
-		if( !current.needs ) current.finished = true;
+		buildThing({item:current, context:context});
+		if( !current.needs ){
+			current.finished = true;
+			
+			// ex: dog(s) which makes it unique for now, without a unique name just yet
+			context.addNoun( current );
+			
+			>>>> 
+			left it at here tryinhg to muster the logic to build a clause and skip to the next
+		}
   }
 	
 	if(current.needs){
@@ -217,23 +225,28 @@ function process({index, que, stack, data, instrs, buildThing, composeThing}) {
 		// to match if its this noun
 		// debugger
 		for (var ii = stack.length - 1; ii >= 0; ii--) {
-			let sp = stack[ii];
-			if( current.needs === sp.type ){
+			let stackPick = stack[ii];
+			if( current.needs === stackPick.type ){
 				
 				// first traverse to make sure words needs is not already in the clause tree
 				let good = true;
 				current.traverseModified(function (item) {
-					if(item === sp){
+					if(item === stackPick){
 						good = false;
 					}
 				})
-				
-				if(good && sp.alreadyMultiplied === false){
+				debugger
+				// DONT like this techniquie .alreadyMultiplied
+				//  cause its baking flags into the processing instead of rules
+				if(good && stackPick.alreadyMultiplied === false){
 					current.incrNeedsIndex();
-					current.modified[sp.word] = sp;
+					current.modified[stackPick.word] = stackPick;
 					
-					composeThing(current, sp)
-					instrs.add(`stack item match build : ${current.type} : ${current.word} + ${sp.type} : ${sp.word}`)
+					composeThing({itemA:current, itemsB:stackPick, context:context});
+					// see note above
+					>>>>>
+					if()
+					instrs.add(`stack item match build : ${current.type} : ${current.word} + ${stackPick.type} : ${stackPick.word}`)
 				}
 				else {
 					// instrs.add(`que add : ${current.type} : ${current.word} looking for ${current.needs}`)
@@ -259,7 +272,7 @@ function process({index, que, stack, data, instrs, buildThing, composeThing}) {
       if( qp.needs === current.type && current.alreadyMultiplied === false ){
         qp.incrNeedsIndex();
 				qp.modified[current.word] = current;
-				composeThing(qp, current)
+				composeThing({itemA:qp, itemB:current, context:context})
         instrs.add(`que item match build : ${qp.type} : ${qp.word} + ${current.type} : ${current.word}`)
         if( !qp.finished ){
 					if (que.hasItem(qp)) {
@@ -327,6 +340,7 @@ class Animal{
 	}
 }
 
+// just makes a 3d plane to the scene
 function makePlane_CM(item){
 	const yy = addPlane({
 		colorHex: 0x5c5cff
@@ -342,26 +356,32 @@ function makePlane_CM(item){
 	return yy;
 }
 
-function buildThing(item) {
+// handles the logic building a noun,
+// and then adds the 3d object to the scene
+function buildThing({item, context}) {
 	console.log(`buildn thing: ${item.word}`);
 	if (item.type === "noun") {
 		// let yy = new Animal(item.word)
 		
 		makePlane_CM(item);
-		
+
 	}
 }
 
+
+
+
+
 // verb > noun roughly
-function composeThing(itemA, itemB) {
+function composeThing({itemA, itemB, context}) {
 	console.log(`composing thing A: ${itemA.word} * B: ${itemB.word}`);
 	
 	
 	// cant think, need the count and arrayt pointers to work right
 	
 	if(itemA.type === "number" && itemB.instanceObjects.length > 0){
-		// debugger
-		console.warn("fix the count here")
+		debugger
+
 		let yy = new CheapPool();
 		yy.add(itemB.instanceObjects[0]);
 		let count = +itemA.word;
@@ -414,6 +434,47 @@ function composeThing(itemA, itemB) {
 // 
 
 
+// thinking....
+// each "line" might should be a class with subjects etc then
+// keep simple for now
+// class Sentence{
+class Line{
+	subject = null;
+	object = null;
+	verb = null;
+	clauses = new CheapPool();
+}
+
+class AContext{
+	subjectNoun = null;
+	objectNoun = null;
+	clauses = new CheapPool();
+	clauseIndex = 0;
+	// ex: dog(s) which makes it unique for now, without a unique name just yet
+	addWord(item){
+		this[item.word] = item;
+	}
+	addNoun(item){
+		this.addWord(item);
+		if(word.type === "noun"){
+			this.parseNoun(item);
+		}
+	}
+	parseNoun(word){
+		
+		// tinkering with storing grammar structure
+		// would become a bigger refactor
+		if ( this.subjectNoun === null ) {
+			this.subjectNoun = item;
+		}
+		if (this.subjectNoun !== null && this.subjectNoun !== item  && !this.objectNoun ) {
+			this.objectNoun = item;
+		}
+		
+	}
+}
+
+
 
 
 // 
@@ -431,8 +492,10 @@ function startParse(phrase){
 	var stack = new CheapPool();
 
 	var index = 0;
-
-
+	
+	// instance variables will be added here
+	// actually, you handle object stuff in the callbacks
+	var context = new AContext();
 	
 	
 	var data2 = buildClassActionsJoinList(phrase)
@@ -442,6 +505,7 @@ function startParse(phrase){
 	for (var i = 0; i < data2.length; i++) {
 	
 		process({
+			context:context,
 			index: i,
 			que: que,
 			stack: stack,
@@ -453,12 +517,20 @@ function startParse(phrase){
 	
 	}
 	
+	console.log(instrs);
 	
 	// checking the modified pointers
 	for (var i = 0; i < stack.length; i++) {
 		let aa = [];
 		for (const prop in stack[i].modified){ aa.push(stack[i].modified[prop].word) }
 		console.log(` ${stack[i].word} m> ${aa }  `);
+	}
+	
+	return {
+		instrs:instrs,
+		que:que,
+		stack:stack,
+		context:context
 	}
 	
 }
@@ -496,11 +568,12 @@ setTimeout(function (x) {
 	
 	clearGame()
 	// startParse("10 cats flying")
-	startParse("10 dogs spinning")
-	// startParse("10 cats 40 birds")
+	// startParse("10 dogs spinning")
+	startParse("10 cats 40 birds")
 	// startParse("20 birds spinning")
 	// startParse("3 birds spinning 2 dogs spinning")
 	// magicbox.value = "3 birds spinning 2 dogs spinning";
 	magicbox.value = "10 cats flying";
+	
 	
 }, 1000)
